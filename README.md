@@ -1,24 +1,5 @@
-# README
+これは、Ruby on Railsを使って制作する単語帳です。
+↓このリンクは、書いてみました
+ https://docs.google.com/spreadsheets/d/1h3HBCF5dlgO1mLIzViEudC1sat30txF4B5aOc87Gdb8/edit?usp=sharing
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
