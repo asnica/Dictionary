@@ -1,11 +1,12 @@
 Rails.application.routes.draw do
+  get "home/index"
   get "pages/home"
   get "sessions/new"
   get "users/new"
  
   get "up" => "rails/health#show", as: :rails_health_check
 
-  root "pages#home"
+  root "home#index"
 
   get "/signup", to: "users#new"
   post "/users", to: "users#create"

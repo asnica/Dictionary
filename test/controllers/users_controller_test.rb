@@ -28,7 +28,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
           }
         }
   
-  assert_redirected_to signup_path
+  assert_redirected_to root_path
   end
 
 end
