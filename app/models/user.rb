@@ -2,6 +2,9 @@ class User < ApplicationRecord
 
     has_secure_password
 
+    has_many :user_words, dependent: :destroy
+    has_many :words, through: :user_words
+
 
     validates :name, presence: true, length: {maximum: 50}
     validates :password, presence: true, length: {minimum: 6}
