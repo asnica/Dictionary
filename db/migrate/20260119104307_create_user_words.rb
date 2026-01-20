@@ -11,10 +11,10 @@ class CreateUserWords < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_indexx :user_words, [:user_id, :word_id], unique: true
+    add_index :user_words, [:user_id, :word_id], unique: true
 
     add_index :user_words, :memorized
 
-    add_index : :user_words, :last_studied_at
+    add_index :user_words, :last_studied_at
   end
 end

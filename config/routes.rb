@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+
+
+  get "word_tags/index"
+  get "word_tags/new"
+  get "word_tags/create"
+  get "word_tags/edit"
+  get "word_tags/update"
+  get "word_tags/destroy"
   get "home/index"
   get "pages/home"
   get "sessions/new"
@@ -15,6 +23,8 @@ Rails.application.routes.draw do
   post "/login", to: "sessions#create"
   delete "/logout", to: "sessions#destroy"
 
+  get "/word_tags/new" , to: "word_tags#new"
 
+  resources :word_tags
  
 end

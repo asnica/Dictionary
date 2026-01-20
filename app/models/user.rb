@@ -9,8 +9,9 @@ class User < ApplicationRecord
     validates :name, presence: true, length: {maximum: 50}
     validates :password, presence: true, length: {minimum: 6}
     validates :email, presence: true, uniqueness: true, format: {with: URI::MailTo::EMAIL_REGEXP}
+   
 
-
+    has_many :word_tags, dependent: :destroy
     before_save :downcase_email
 
     private 
