@@ -1,2 +1,136 @@
-<h1>WordTags#index</h1>
-<p>Find me in app/views/word_tags/index.html.erb</p>
+<div class="container">
+ <div class="page-header">
+  <h1>単語タグマスタ</h1>
+  </div class="header-actions">
+   <%=link_to "メニューへ戻る", root_path, class: "btn btn-secondary" %>
+   <%=link_to "新規登録", new_word_tag_path, class: "btn btn-primary" %>
+  </div>
+  </div>
+
+  <div class= "search-box">
+    <%=form_with url: word_tags_path, method: :get, local: true do |f| %>
+      <%=f.text_field :search,
+         value: params[:search],
+         placeholder: "タグ名で検索",
+         class: "form-control" %>
+      <%=f.submit "検索", class:"btn btn-primary" %>
+      <%if params[:search].present? %>
+          <%=link_to "クリア", word_tags_path, class: "btn btn-secondary" %>
+          <%end%>
+        <%end%>
+
+        <section class="tags-section">
+         <h2>シスタムタグ</h2>
+          <div class="tags-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>タグ名</th>
+                  <th>説明</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @system_tags.each do |tag| %>
+                  <tr>
+                    <td>
+                      <span class="tag-badge" style="background-color: <%=tag.color%>">
+                       <%=tag.name%>
+                      </span>
+                      </td>
+                      <td><%=tag.description%></td>
+                      <td>
+                        <%=link_to"詳細", word_tag_path(tag), class: "btn btn-sm" %>
+                      </td>
+                        
+                     
+                  </tr>
+                  <%end%>
+                  </tbody>
+                  </table>
+                  </div>
+                  </section>
+                  
+                  <section class="tags-section">
+    <h2>システムタグ</h2>
+    <div class="tags-table">
+      <table>
+        <thead>
+          <tr>
+            <th>名前</th>
+            <th>説明</th>
+            <th>単語数</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @system_tags.each do |tag| %>
+            <tr>
+              <td>
+                <span class="tag-badge" style="background-color: <%= tag.color %>">
+                  <%= tag.name %>
+                </span>
+              </td>
+              <td><%= tag.description %></td>
+              <td><%= tag.words_count %></td>
+              <td>
+                <%= link_to "詳細", word_tag_path(tag), class: "btn btn-sm" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="tags-section">
+    <h2>個人タグ</h2>
+    <% if @custom_tags.any? %>
+      <div class="tags-table">
+        <table>
+          <thead>
+            <tr>
+              <th>名前</th>
+              <th>説明</th>
+              <th>単語数</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @custom_tags.each do |tag| %>
+              <tr>
+                <td>
+                  <span class="tag-badge" style="background-color: <%= tag.color %>">
+                    <%= tag.name %>
+                  </span>
+                </td>
+                <td><%= tag.description %></td>
+                <td><%= tag.words_count %></td>
+                <td>
+                  <%= link_to "編集", edit_word_tag_path(tag), class: "btn btn-sm btn-primary" %>
+                  <%= button_to "削除", word_tag_path(tag), 
+                                method: :delete, 
+                                data: { confirm: "削除しますか？" },
+                                class: "btn btn-sm btn-danger" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="empty-message">
+        <% if params[:search].present? %>
+          検索結果がありません
+        <% else %>
+          タグがありません
+        <% end %>
+      </p>
+    <% end %>
+  </section>
+</div>
+
+
+              
+
+  

@@ -27,11 +27,63 @@ RSpec.describe "WordTags", type: :request do
   end
 
   describe "GET /word_tags" do
-    it "shows system tags and own custom tags" do
+    it "returns success response" do
+      get word_tags_path
+      expect(response).to have_http_status(:success)
+
       
     end
 
+    it "assigns @system_tags" do 
+      get word_tags_path
+      expect(assigns(:system_tags)).to include(system_tag)
+    end
+
+    it "assigns @suctom_tags with only user's tags" do
+      get word_tags_path
+      expect(assigns(:custom_tags)).to include(user_tag)
+      expect(assigns(:custom_tags)).not_to include(other_user_tag)
+    end
   end
+
+
+
+  #authorization 
+
+  describe "Get /word_tags/:id/edit" do
+    context "when editing a system tag" do
+      it "redirect with alert" do
+        get edit_word_tag_path(system_tag)
+        expect(response).to redirect_to(word_tags_path)
+        follow_redirect!
+        expect(response.body).to include("システムタグは変更できません。")
+      end
+    end
+
+    context "when editing other user's tag" do
+      it "redirects with alert" do
+        get edit_word_tag_path(other_user_tag)
+        expect(response).to redirect_to (word_tags_path)
+        follow_redirect!
+        expect(response.body).to include("他のユーザーのタグは変更できません。")
+      end
+    end
+
+    context "when editing own tag" do
+      it "returns success" do 
+        get edit_word_tag_path(user_tag)
+        expect(response).to have_http_status(:success)
+      end
+    end
+    
+
+  end
+
+
+
+
+end
+
 
 
   
@@ -79,4 +131,4 @@ RSpec.describe "WordTags", type: :request do
   #   end
   # end
 
-end
+

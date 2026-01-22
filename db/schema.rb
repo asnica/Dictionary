@@ -23,9 +23,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_20_085119) do
     t.datetime "last_studied_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["last_studied_at"], name: "index_user_words_on_last_studied_at"
-    t.index ["memorized"], name: "index_user_words_on_memorized"
-    t.index ["user_id", "word_id"], name: "index_user_words_on_user_id_and_word_id", unique: true
     t.index ["user_id"], name: "index_user_words_on_user_id"
     t.index ["word_id"], name: "index_user_words_on_word_id"
   end
@@ -36,7 +33,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_20_085119) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "word_taggings", force: :cascade do |t|
@@ -63,12 +59,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_20_085119) do
   end
 
   create_table "words", force: :cascade do |t|
-    t.string "japanese", null: false
+    t.string "japanese"
     t.string "reading"
-    t.string "english", null: false
+    t.string "english"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["japanese"], name: "index_words_on_japanese", unique: true
   end
 
   add_foreign_key "user_words", "users"

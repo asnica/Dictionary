@@ -1,40 +1,22 @@
-<div class="home-container">
-  <header class="home-header">
-    <div class="header-content">
-      <h1>単語帳アプリにようこそ</h1>
-      
-      <% if logged_in? %>
-        <div class="user-info">
-          <span class="welcome-text">
-            <%= current_user.name %>さん、ようこそ！
-          </span>
-          <%= button_to "ログアウト", logout_path, method: :delete, class: "btn btn-logout" %>
-        </div>
-      <% end %>
-    </div>
-  </header>
+<div class="container">
+  <h1>メニュー</h1>
   
-  <main class="home-main">
-    <div class="home-content">
-      <h2>ようこそ！</h2>
-      <p>日本語単語帳アプリケーションです。</p>
-      
-      <div class="feature-cards">
-        <div class="card">
-          <h3>📚 単語管理</h3>
-          <p>日本語の単語を登録して管理しましょう</p>
-        </div>
-        
-        <div class="card">
-          <h3>🏷️ タグ分類</h3>
-          <p>タグで単語を体系的に分類しましょう</p>
-        </div>
-        
-        <div class="card">
-          <h3>📝 クイズ</h3>
-          <p>登録した単語でクイズをしましょう</p>
-        </div>
-      </div>
+  <div class="menu-list">
+    <%= link_to word_tags_path, class: "menu-item" do %>
+      <h2>単語タグマスタ</h2>
+      <p>タグの新規登録、検索、修正、削除</p>
+    <% end %>
+    
+    <div class="menu-item disabled">
+      <h2>単語マスタ</h2>
+      <p>単語の登録、検索、CSV出力</p>
+      <span class="badge">準備中</span>
     </div>
-  </main>
+    
+    <div class="menu-item disabled">
+      <h2>問題集</h2>
+      <p>クイズ機能</p>
+      <span class="badge">準備中</span>
+    </div>
+  </div>
 </div>
