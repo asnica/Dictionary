@@ -1,5 +1,113 @@
+# <div class = "form-container">
+#     <header class="form-header">
+#         <h1>新しいたーぐ</h1>
+#         <%=link_to "リストで", word_tags_path, class: "btn btn-secondary" %>
+#     </header>
+
+#     <%= form_with model: @word_tag, local: true do |f| %>
+
+#         <%if @word_tag.errors.any? %> 
+#             <div class = "error-box">
+#                 <h3><%= pluralize(@word_tags.erros.count, "error") %> 発送：</h3>
+#                 <ul>
+#                   <% @word_tag.errors.full_messages.each do |message| %>
+#                         <li><%= message %></li>
+#                     <% end %>
+                    
+                
+                  
+#                 </ul>
+#             </div>
+#         <% end %>
 
 
+#         <div class="form-group">
+#             <%= f.label :name, "タグ名前" %>
+#             <%= f.text_field :name, class: "form-control", placeholder : "覚えにくい" %>
+#         </div>
 
+#         <div class="form-group">
+#           <%= f.label :name, "説明"%>
+#           <%= f.text_field :name, class: "form-control", placeholder: タグに対する説明を入力してください" %>
+#         </div>
+
+#         <div class="form-group">
+#             <%= f.label :color, "色" %>
+#             <div class = "color-picker">
+#                 <%= f.color_filed :color, value: "#4CAF50", class: "form-control-color" %>
+#                 <span class = "color-preview" style="background-color : #4CAF50"></span>
+#             </div>
+#         </div>
+
+#         <div class="form-actions">
+#             <%= f.submit "生成", class: "btn btn-primary" %>
+#             <%= link_to "キャンスール", word_tags_path, class: "btn btn-secondary" %>
+#         </div>
+
+#         <% end %>
+
+#     </div>
+
+  
+
+<div class="container">
+  <div class="page-header">
+    <h1>単語タグ新規登録</h1>
+    <div class="header-actions">
+      <%= link_to "一覧へ戻る", word_tags_path, class: "btn btn-secondary" %>
+      <%= link_to "メニューへ戻る", root_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <%= form_with model: @word_tag, local: true do |f| %>
+    <% if @word_tag.errors.any? %>
+      <div class="error-box">
+        <h3><%= pluralize(@word_tag.errors.count, "エラー") %> 発生:</h3>
+        <ul>
+          <% @word_tag.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :name, "タグ名" %>
+      <%= f.text_field :name, class: "form-control", placeholder:"例: 動詞" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :description, "説明" %>
+      <%= f.text_area :description, class: "form-control", placeholder: "このタグの用途を入力" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :color, "色" %>
+      <%= f.color_field :color, class: "form-control", value: (@word_tag.color.presence || "#4CAF50") %>
+      <span class="color-preview"> </span>
+    
+      <div class="form-actions">
+      <%= f.submit "作成", class: "btn btn-primary" %>
+      <%= link_to "キャンセル", word_tags_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>
+
+
+# <script>
+# document.addEventListener('turbo:load', function(){
+#     const colorInput = document.querySelector('input[type="color"]');
+#     const colorPreview = document.querySelector('.color-preview');
+
+#         if (colorInput&&colorPreview){
+#             colorInput.addEventListener('input',function() {
+#                 colorPreview.style.backgroundColor = this.value;
+#             });
+#         }
+#     };
+# </script>
+    
+
+              
 
 
