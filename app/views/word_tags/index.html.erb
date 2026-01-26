@@ -19,39 +19,8 @@
           <%end%>
         <%end%>
 
-        <section class="tags-section">
-         <h2>シスタムタグ</h2>
-          <div class="tags-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>タグ名</th>
-                  <th>説明</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @system_tags.each do |tag| %>
-                  <tr>
-                    <td>
-                      <span class="tag-badge" style="background-color: <%=tag.color%>">
-                       <%=tag.name%>
-                      </span>
-                      </td>
-                      <td><%=tag.description%></td>
-                      <td>
-                        <%=link_to"詳細", word_tag_path(tag), class: "btn btn-sm" %>
-                      </td>
-                        
-                     
-                  </tr>
-                  <%end%>
-                  </tbody>
-                  </table>
-                  </div>
-                  </section>
-                  
-                  <section class="tags-section">
+    <section class="tags-section">
+         
     <h2>システムタグ</h2>
     <div class="tags-table">
       <table>

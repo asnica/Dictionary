@@ -1,12 +1,11 @@
 class WordTagsController < ApplicationController
-
   before_action :authenticate_user!
-  before_action :set_word_tag, only: [:show,:edit, :update, :destroy]
-  before_action :authorize_user!, only: [:edit, :update, :destroy]
+  before_action :set_word_tag, only: [ :show, :edit, :update, :destroy ]
+  before_action :authorize_user!, only: [ :edit, :update, :destroy ]
 
   def index
     @system_tags = WordTag.system_tags.order(:name)
-    
+
     if params[:search].present?
        @custom_tags = current_user.word_tags
                           .where("name ILIKE ?", "%#{params[:search]}%")
@@ -14,11 +13,6 @@ class WordTagsController < ApplicationController
     else
       @custom_tags = current_user.word_tags.order(created_at: :desc)
     end
-
-                    
-  
-  
-  
   end
 
   def show
@@ -26,7 +20,7 @@ class WordTagsController < ApplicationController
   end
 
 
- 
+
 
   def new
     @word_tag = WordTag.new
@@ -65,7 +59,7 @@ class WordTagsController < ApplicationController
   end
 
 
-  private 
+  private
 
   def set_word_tag
     @word_tag = WordTag.find(params[:id])
@@ -85,9 +79,6 @@ class WordTagsController < ApplicationController
   end
 
   def word_tag_params
-    params.require(:word_tag).permit(:name, :description, :color )
+    params.require(:word_tag).permit(:name, :description, :color)
   end
-
-
-
 end

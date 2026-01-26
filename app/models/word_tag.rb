@@ -17,6 +17,7 @@ class WordTag < ApplicationRecord
   def custom_tag?
     user_id.present?
   end
+
   
 
 
