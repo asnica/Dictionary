@@ -98,4 +98,17 @@ RSpec.describe Word, type: :model do
       expect(word.synonyms.count).to eq(2)
     end
   end
+
+  describe "image attagement" do
+    it "can have an image attached" do
+      word = Word.create(japanese: "花", english: "flower")
+
+      image_file = fixture_file_upload(
+        Rails.root.join('spec', 'fixtures', 'files', 'test.jpg'),
+        'image/jpeg'
+      )
+      word.image.attach(image_file)
+      expect(word.image).to be_attached
+    end
+  end
 end
