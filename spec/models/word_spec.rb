@@ -11,9 +11,20 @@ RSpec.describe Word, type: :model do
 
 
   describe 'validations' do
-    it { should validate_presence_of(:japanese) }
-    it { should validate_uniqueness_of(:japanese) }
-    it { should validate_presence_of(:english) }
+    describe 'japanese uniqueness' do
+    it "does not allow duplicate japanese words" do
+      Word.create!(japanese: "猫", english: "cat")
+      word = build(:word, japanese: "猫", english: "dog")
+      expect(word).not_to be_valid
+    end
+  end
+
+  describe 'english presence' do
+    it "validates presence of english" do
+      word = build(:word, english: nil)
+      expect(word).not_to be_valid
+    end
+  end
   end
 
 
