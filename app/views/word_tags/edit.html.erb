@@ -1,2 +1,51 @@
-<h1>WordTags#edit</h1>
-<p>Find me in app/views/word_tags/edit.html.erb</p>
+<div class = "container">
+  <div class = "page-header">
+    <h1>タグ編集</h1>
+    <%= link_to "← 一覧に戻る", word_tags_path, class: "btn btn-secondary" %>
+  </div>
+  <div class = "form-container">
+    <%= form_with model: @word_tag, local: true do |f| %>
+      <% if @word_tag.errors.any? %>
+        <div class = "error-box">
+          <h3><%= pluralize(@word_tag.errors.count, "error") %> が発生しました:</h3>
+          <ul>
+            <% @word_tag.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div class = "form-group">
+        <%= f.label :name, "タグ名 *" %>
+        <%= f.text_field :name, class: "form-control"%>
+      </div>
+      <div class = "form-group">
+        <%= f.label :description, "説明" %>
+        <%= f.text_area :description, rows: 3, class: "form-control"%>
+      </div>
+      <div class="form-group">
+        <%= f.label :color, "色" %>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <%= f.color_field :color, class: "form-control", value: (@word_tag.color.presence || "#4CAF50") %>
+          <span class="color-preview" style="display: inline-block; width: 30px; height: 30px; border: 1px solid #ccc; border-radius: 4px; background-color: <%= @word_tag.color.presence || "#4CAF50" %>;"></span>
+        </div>
+        <div class = "form-actions">
+          <%= f.submit "更新", class: "btn btn-primary" %>
+          <%= link_to "キャンセル", word_tags_path, class: "btn btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
+    </div>
+
+ <script>
+  document.addEventListener('turbo:load', function() {
+    const colorInput = document.querySelector('input[type="color"]');
+    const colorPreview = document.querySelector('.color-preview');
+
+    if (colorInput && colorPreview) {
+      colorInput.addEventListener('input', function() {
+        colorPreview.style.backgroundColor = this.value;
+      });
+    }
+  });
+</script>

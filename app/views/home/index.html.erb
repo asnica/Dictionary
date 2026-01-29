@@ -7,10 +7,11 @@
       <p>タグの新規登録、検索、修正、削除</p>
     <% end %>
     
-    <div class="menu-item disabled">
+    <div class="menu-list">
+      <%= link_to words_path, class: "menu-item" do %>
       <h2>単語マスタ</h2>
       <p>単語の登録、検索、CSV出力</p>
-      <span class="badge">準備中</span>
+    <% end %>
     </div>
     
     <div class="menu-item disabled">

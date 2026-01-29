@@ -6,7 +6,7 @@ class WordsController < ApplicationController
     @words = Word.all
 
     if params[:search].present?
-      search_params = params[:search]
+       search_params = params[:search]
 
       if search_params[:japanese].present?
         @words = @words.where("japanese LIKE ?", "%#{search_params[:japanese]}%")
@@ -28,7 +28,7 @@ class WordsController < ApplicationController
   end
   def new
     @word= Word.new
-    @word_tags = WordTag.system_tags.order(:name)
+    @word_tags = WordTag.for_user(current_user).order(:name)
     3.times { @word.synonyms.build }
   end
 
@@ -39,14 +39,14 @@ class WordsController < ApplicationController
       flash[:notice] = "単語を登録しました。"
       redirect_to words_path
     else
-      @word_tags = WordTag.system_tags.order(:name)
+      @word_tags = WordTag.for_user(current_user).order(:name)
       flash.now[:alert] = "登録に失敗しました。"
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @word_tags = WordTag.system_tags.order(:name)
+    @word_tags = WordTag.for_user(current_user).order(:name)
 
     if @word.synonyms.empty?
       3.times { @word.synonyms.build }
@@ -64,16 +64,20 @@ class WordsController < ApplicationController
     end
   end
 
-  def destroy
-    @word.destroy
-    flash[:notice] = "単語を削除しました。"
-    redirect_to words_path
-  end
+    def destroy
+      @word.destroy
+      flash[:notice] = "単語を削除しました。"
+      redirect_to words_path
+    end
 
 
 
   private
   def set_word
     @word = Word.find(params[:id])
+  end
+
+  def word_params
+    params.require(:word).permit(:japanese, :english, :reading, :image, word_tag_ids: [], synonyms_attributes: [ :id, :synonym_word, :_destroy ])
   end
 end

@@ -1,0 +1,134 @@
+<div class="container">
+  <div class="page-header">
+    <h1>単語編集</h1>
+    <%= link_to "← 一覧に戻る", words_path, class: "btn btn-secondary" %>
+  </div>
+  
+  <%= form_with model: @word, local: true, html: { multipart: true } do |f| %>
+    
+    <% if @word.errors.any? %>
+      <div class="error-box">
+        <h3><%= pluralize(@word.errors.count, "error") %> が発生しました:</h3>
+        <ul>
+          <% @word.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <div class="form-section">
+      <h2>基本情報</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <%= f.label :japanese, "単語 *" %>
+          <%= f.text_field :japanese, class: "form-control" %>
+        </div>
+        
+        <div class="form-group">
+          <%= f.label :reading, "読み" %>
+          <%= f.text_field :reading, class: "form-control" %>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :english, "意味 *" %>
+        <%= f.text_field :english, class: "form-control" %>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h2>画像</h2>
+      
+      <% if @word.image.attached? %>
+        <div class="current-image">
+          <%= image_tag @word.image.variant(resize_to_limit: [200, 200]) %>
+          <div class="image-delete">
+            <%= f.check_box :remove_image, { id: 'remove_image' }, '1', '0' %>
+            <%= f.label :remove_image, "画像を削除" %>
+          </div>
+        </div>
+      <% end %>
+      
+      <div class="form-group">
+        <%= f.file_field :image, accept: "image/*", class: "form-control", text: "画像を選択" %>
+        <small class="form-text">JPEG、PNG、GIF形式（最大5MB）</small>
+      </div>
+    </div>
+    
+    <!-- タグ -->
+    <div class="form-section">
+      <h2>タグ（複数選択可）</h2>
+      
+      <div class="tags-checkboxes">
+        <%= f.collection_check_boxes :word_tag_ids, @word_tags, :id, :name do |b| %>
+          <div class="tag-checkbox">
+            <%= b.check_box %>
+            <%= b.label do %>
+              <span class="tag-badge" style="background-color: <%= b.object.color %>">
+                <%= b.object.name %>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- 類義語 -->
+    <div class="form-section">
+      <h2>類義語（複数登録可）</h2>
+      
+      <div id="synonyms-fields">
+        <%= f.fields_for :synonyms do |synonym_form| %>
+          <div class="synonym-field">
+            <%= synonym_form.hidden_field :id %>
+            <%= synonym_form.text_field :synonym_word, class: "form-control" %>
+            <div class="synonym-delete">
+              <%= synonym_form.check_box :_destroy, class: "synonym-destroy-checkbox" %>
+              <%= synonym_form.label :_destroy, "削除" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <button type="button" id="add-synonym" class="btn btn-secondary btn-sm">
+        + 類義語を追加
+      </button>
+    </div>
+    
+    <!-- 送信ボタン -->
+    <div class="form-actions">
+      <%= f.submit "更新", class: "btn btn-primary btn-large" %>
+      <%= link_to "キャンセル", words_path, class: "btn btn-secondary" %>
+    </div>
+    
+  <% end %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const addSynonymBtn = document.getElementById('add-synonym');
+  const synonymsContainer = document.getElementById('synonyms-fields');
+  
+  if (addSynonymBtn && synonymsContainer) {
+    addSynonymBtn.addEventListener('click', function() {
+      const time = new Date().getTime();
+      
+      const newField = document.createElement('div');
+      newField.className = 'synonym-field';
+      newField.innerHTML = `
+        <input type="text" 
+               name="word[synonyms_attributes][${time}][synonym_word]" 
+               class="form-control" 
+               placeholder="類義語を入力">
+        <div class="synonym-delete">
+          <span class="text-muted">新規</span>
+        </div>
+      `;
+      
+      synonymsContainer.appendChild(newField);
+    });
+  }
+});
+</script>

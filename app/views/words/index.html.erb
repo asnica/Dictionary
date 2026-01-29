@@ -10,33 +10,116 @@
   <div class = "search-box">
     <%= form_with url: words_path, method: :get, local: true do |f|%>
         <div class = "search-grid">
-                <div class = "form-group">
-                    <%= f.label "search[japanese]", "単語"%>
-                    <%= f.text_field "search[japanese]",
-                                        value: params.dig(:search, :japanese),
-                                        class: "form-control",
-                                        placeholder: "犬" %>
-                </div>
-                <div class = "form-group">
-                    <%=f.label "search[english]","意味" %>
-                    <%= f.text_field "search[english]",
-                                        value: params.dig(:search, :english),
-                                        class: "form-control",
-                                        placeholder: "dog" %>
-                </div>
-                <div class = "form-group">
-                    <%= f.label "search[word_tag_id]", "タグ"%>
-                    <%= f.select "search[word_tag_id]",
-                                    options_from_collection_for_select(
-                                        @word_tags, :id, :name, params.dig(:search, :word_tag_id)),
-                                     { include_blank: "すべて" }, class: "form-control" %>
-                </div>
-                    
+          <div class = "form-group">
+              <%= f.label "search[japanese]", "単語"%>
+              <%= f.text_field "search[japanese]",
+                                  value: params.dig(:search, :japanese),
+                                  class: "form-control",
+                                  placeholder: "犬" %>
+          </div>
 
-                    
+          <div class = "form-group">
+              <%=f.label "search[english]","意味" %>
+              <%= f.text_field "search[english]",
+                                  value: params.dig(:search, :english),
+                                  class: "form-control",
+                                  placeholder: "dog" %>
+          </div>
+
+          <div class = "form-group">
+              <%= f.label "search[word_tag_id]", "タグ"%>
+              <%= f.select "search[word_tag_id]",
+                              options_from_collection_for_select(
+                                  @word_tags, :id, :name, params.dig(:search, :word_tag_id)),
+                                { include_blank: "すべて" }, class: "form-control" %>
+          </div>
         </div>
-    <%  end  %>
+        <div class = "search-actions">
+                <%= f.submit "検索", class: "btn btn-primary" %>
+                <% if params[:search].present? %>
+                  <%= link_to "クリア", words_path, class: "btn btn-secondary" %>
+                <% end %>
+        </div>
+      <% end %>
     </div>
+
+
+
+        <div class="words-count">
+            <%= @words.count %> 件の単語が見つかりました。
+        </div>
+
+
+        <% if @words.any? %>
+          <div class = "words-table">
+          <table>
+              <thead>
+                  <tr>
+                <th>画像</th>
+                <th>単語</th>
+                <th>読み</th>
+                <th>意味</th>
+                <th>タグ</th>
+                <th>類義語</th>
+                <th>操作</th>
+          </tr> 
+          </thead>
+          <tbody>
+            <% @words.each do |word|%>
+            <tr>
+                <td class = "text-center">
+                  <% if word.image.attached? %>
+                    <%= image_tag word.image.variant(resize_to_limit: [50,50]), class: "word-thumbnail" %>
+                  <% else %>
+                  <span class = "no-image">-</span>
+                  <% end %>
+                </td>  
+                <td class = "word-japanese"><%=word.japanese %></td>
+                <td> <%=word.reading %></td>
+                <td><%=word.english %></td>
+                <td>
+                  <% if word.word_tags.any? %>
+                    <div class = "tags-list">
+                      <% word.word_tags.each do |tag| %>
+                        <span class = "tag-badge" style = "background-color: <%= tag.color%>">
+                          <%= tag.name %>
+                        </span>
+                      <% end %>
+                    </div>
+                    <% else %>
+                      <span class = "text-muted">-</span>
+                      <% end %>
+                </td>
+                <td>
+                  <% if word.synonyms.any? %>
+                    <div class = "synonyms-list">
+                      <% word.synonyms.each do |synonym| %>
+                        <span class = "synonym-item"><%= synonym.synonym_word %></span>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class = "text-muted">-</span>
+                  <% end %>
+                </td>
+                <td class = "action-buttons">
+                  <%= link_to "編集", edit_word_path(word), class: "btn btn-sm btn-primary" %>
+                  <%= button_to "削除", word_path(word), method: :delete, data: {confirm: "削除しますか？関連する類義語も削除されます。"}, class: "btn btn-sm btn-danger" %>
+                </td>
+            </tr>
+            <% end %>
+          </tbody>
+          </table>
+          </div>
+        <% else %>
+        <p class = "empty-message">
+          <% if params[:search].present? %>
+            検索結果がありません。
+          <% else %>
+            単語がありません。
+          <% end %>
+        </p>
+                              <% end %>
+</div>
 
         
 
