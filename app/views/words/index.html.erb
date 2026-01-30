@@ -3,6 +3,7 @@
     <h1>単語マスタ</h1>
     <div class="header-actions">
       <%= link_to "メニューへ戻る", root_path, class: "btn btn-secondary" %>
+      <%= link_to "CSV出力", export_csv_words_path(params.slice(:search).permit!), class: "btn btn-success"%>
       <%= link_to "新規登録", new_word_path, class: "btn btn-primary" %>
     </div>
   </div>
