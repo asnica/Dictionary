@@ -55,7 +55,7 @@ group :development, :test do
 
   gem "rspec-rails", "~> 6.0.0"
   gem "factory_bot_rails", "~> 6.0"
-  gem "faker", "~> 3.0"
+  gem "faker", "~> 3.6"
   gem "shoulda-matchers", "~> 6.0"
   gem "database_cleaner-active_record"
 
