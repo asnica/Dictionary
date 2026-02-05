@@ -53,7 +53,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
 
-  gem "rspec-rails", "~> 6.0.0"
+  gem "rspec-rails", "~> 8.0.2"
   gem "factory_bot_rails", "~> 6.0"
   gem "faker", "~> 3.0"
   gem "shoulda-matchers", "~> 6.0"
