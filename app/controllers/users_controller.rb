@@ -7,13 +7,26 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      flash[:notice] = "会員登録に成功しました！"
+      UserMailer.welcome_email(@user).deliver_later
+      flash[:notice] = "確認メールを送信しました。メールのリンクをクリックしてください。"
       redirect_to root_path
     else
       flash.now[:alert] = "会員登録に失敗しました。"
       render :new, status: :unprocessable_entity
     end
-    
+  end
+
+  def confirm_email
+    user = User.find_by(confirmation_token: params[:token])
+
+    if user&.confirm_email
+      log_in(user)
+      flash[:notice] = "メールアドレスが確認されました。ようこそ"
+      redirect_to root_path
+    else
+      flash[:alert] = "無効な確認リンクです。"
+      redirect_to root_path
+    end
   end
 
   private
@@ -22,4 +35,3 @@ class UsersController < ApplicationController
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end
 end
-

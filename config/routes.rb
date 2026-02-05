@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
   get "/word_tags/new", to: "word_tags#new"
 
+  get "/confirm_email", to: "users#confirm_email", as: :confirm_email
+
 
   resources :word_tags
 

@@ -13,6 +13,7 @@ class User < ApplicationRecord
 
     has_many :word_tags, dependent: :destroy
     before_save :downcase_email
+    before_create :generate_confirmation_token
 
     def current_quiz
       quizzes.find_by(status: "in_progress")
@@ -32,9 +33,21 @@ class User < ApplicationRecord
        completed.average(:score).to_f.round(2)
     end
 
+    def confirm_email
+      update(confirmed_at: Time.current, confirmation_token: nil)
+    end
+
+    def confirmed?
+      confirmed_at.present?
+    end
+
     private
 
     def downcase_email
         self.email = email.downcase
+    end
+
+    def generate_confirmation_token
+      self.confirmation_token = SecureRandom.urlsafe_base64.to_s
     end
 end

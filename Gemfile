@@ -31,6 +31,7 @@ gem "solid_queue"
 gem "solid_cable"
 gem "kaminari"
 
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
@@ -71,6 +72,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "htmlbeautifier"
+  gem "letter_opener"
 end
 
 group :test do

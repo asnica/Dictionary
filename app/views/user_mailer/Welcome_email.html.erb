@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 5px 5px 0 0;
+    }
+    .content {
+      background-color: #f9f9f9;
+      padding: 30px;
+      border: 1px solid #ddd;
+      border-radius: 0 0 5px 5px;
+    }
+    .info-box {
+      background-color: white;
+      padding: 15px;
+      margin: 20px 0;
+      border-left: 4px solid #4CAF50;
+    }
+    .footer {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>単語帳アプリへようこそ！</h1>
+  </div>
+  
+  <div class="content">
+    <p><%= @user.name %>様</p>
+    
+    <p>単語帳アプリへのご登録ありがとうございます。<br>
+    <%= @user.name %>様の会員登録に成功しました。</p>
+    
+    <div class="info-box">
+      <strong>登録メールアドレス:</strong> <%= @user.email %>
+    </div>
+    
+    <p>これから単語学習をお楽しみください！</p>
+    
+    <p>
+      <a href="<%= login_url %>" style="display: inline-block; padding: 12px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+        ログインして始める
+      </a>
+    </p>
+  </div>
+  
+  <div class="footer">
+    <p>このメールに心当たりがない場合は、このメールを無視してください。</p>
+    <p>&copy; <%= Time.current.year %> 単語帳アプリ</p>
+  </div>
+</body>
+</html>
