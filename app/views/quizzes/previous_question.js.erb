@@ -1,0 +1,21 @@
+<!-- app/views/quizzes/previous_question.js.erb -->
+document.getElementById('question-number').textContent = '<%= @question_number %>';
+
+document.getElementById('quiz-content').innerHTML = '<%= j render "question", question: @current_question, question_number: @question_number %>';
+
+<% unless @quiz.last_question? %>
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.innerHTML = '次の問題へ →';
+  nextBtn.classList.remove('btn-success');
+  nextBtn.classList.add('btn-primary');
+  nextBtn.formAction = '<%= next_question_quiz_path(@quiz) %>';
+  nextBtn.dataset.remote = 'true';
+<% end %>
+
+<% if @quiz.first_question? %>
+  const prevBtn = document.getElementById('prev-btn');
+  if (prevBtn) prevBtn.style.display = 'none';
+<% else %>
+  const prevBtn = document.getElementById('prev-btn');
+  if (prevBtn) prevBtn.style.display = 'block';
+<% end %>

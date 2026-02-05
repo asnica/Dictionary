@@ -21,15 +21,15 @@ class WordsController < ApplicationController
         @words = @words.joins(:word_taggings).where(word_taggings: { word_tag_id: search_params[:word_tag_id] })
       end
     end
-    @words = @words.distinct.order(:japanese)
+    @words = @words.distinct.order(:japanese).page(params[:page]).per(10)
     @word_tags = WordTag.system_tags.order(:name)
   end
   def show
   end
   def new
-    @word= Word.new
+    @word ||= Word.new
     @word_tags = WordTag.for_user(current_user).order(:name)
-    3.times { @word.synonyms.build }
+    3.times { @word.synonyms.build } if @word.new_record? && @word.synonyms.empty?
   end
 
   def create
@@ -40,7 +40,7 @@ class WordsController < ApplicationController
       redirect_to words_path
     else
       @word_tags = WordTag.for_user(current_user).order(:name)
-      flash.now[:alert] = "登録に失敗しました。"
+      3.times { @word.synonyms.build } if @word.synonyms.count < 3
       render :new, status: :unprocessable_entity
     end
   end
@@ -58,7 +58,7 @@ class WordsController < ApplicationController
       flash[:notice]= "単語を更新しました。"
       redirect_to words_path
     else
-      @word_tags = WordTag.system_tags.order(:name)
+      @word_tags = WordTag.for_user(current_user).order(:name)
       flash.now[:alert] = "更新に失敗しました。"
       render :edit, status: :unprocessable_entity
     end
@@ -113,7 +113,7 @@ class WordsController < ApplicationController
     params.require(:word).permit(
       :japanese,
       :reading,
-      :korean,
+      :english,
       :image,
       word_tag_ids: [],
       synonyms_attributes: [ :id, :synonym_word, :_destroy ]

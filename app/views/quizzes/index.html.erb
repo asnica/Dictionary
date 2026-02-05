@@ -1,0 +1,51 @@
+<div class="quiz-menu-container">
+  <h1>クイズメニュー</h1>
+  <% if @words_count < 10 %>
+    <div class = "error-box">
+      <h3> クイズを始めることができません </h3>
+      <p> クイズを始めるには、少なくとも10個の単語が必要です。 </p>
+      <p>現在登録されている単語： <strong><%= @words_count %></strong> 個</p>
+      <p><%= link_to "単語を追加する", new_word_path , class: "btn btn-primary" %></p>
+    </div>
+  <% else %>
+    <div class="quiz-actions">
+      <%= button_to "新しく単語帳を始める", quizzes_path, method: :post, class: "btn btn-primary btn-large" %>
+      <% if @current_quiz %>
+        <%= link_to "続きから", quiz_path(@current_quiz), class: "btn btn-success btn-large" %>
+      <% end %>
+    </div>
+  <% end %>
+  <% if @completed_quizzes.any? %>
+    <div class="completed-quizzes">
+      <h2>最近完了したクイズ</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>完了時刻</th>
+            <th>点数</th>
+            <th>正答率</th>
+            <th>アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @completed_quizzes.each do |quiz| %>
+            <tr>
+              <td><%= quiz.completed_at.strftime('%Y-%m-%d %H:%M') %></td>
+              <td><%= quiz.score %> / <%= quiz.total_questions %></td>
+              <td><%= quiz.accuracy_rate %>%</td>
+              <td>
+                <%= link_to "回答を見る", result_quiz_path(quiz), class: "btn btn-sm btn-primary" %>
+                <%= button_to "もう一度やる", restart_quiz_path(quiz), method: :post, class: "btn btn-sm btn-warning" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= link_to "すべてのクイズを見る →", past_quizzes_quizzes_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+  <div class="menu-link">
+    <%= link_to "← メニューへ戻る", root_path, class: "btn btn-secondary" %>
+    <%= link_to "ランキングを見る →", ranking_path, class: "btn btn-primary" %>
+  </div>
+</div>

@@ -10,6 +10,9 @@ class Word < ApplicationRecord
 
     has_many :synonyms, dependent: :destroy
 
+    has_many :quiz_questions, dependent: :restrict_with_error
+    has_many :quizzes, through: :quiz_questions
+
     has_one_attached :image
     validate :acceptable_image
 
@@ -21,6 +24,22 @@ class Word < ApplicationRecord
 
     def has_tag?(tag_name)
        word_tags.exists?(name: tag_name)
+    end
+
+
+    def used_in_quiz?
+      quiz_questions.exists?
+    end
+
+    def quiz_count
+      quiz_questions.joins(:quiz).where(quizzes: { status: "completed" }).count
+    end
+
+    def correct_rate
+      total = quiz_questions.where.not(is_correct: nil).count
+      return 0 if total.zero?
+      correct = quiz_questions.where(is_correct: true).count
+      (correct.to_f / total * 100).round(2)
     end
 
     private

@@ -1,0 +1,49 @@
+<!-- app/views/quizzes/result.html.erb -->
+<div class="result-container">
+  <h1>クイズ結果</h1>
+  <div class="score-card">
+    <h2>スコア</h2>
+    <div class="score-number">
+      <%= @quiz.score %> / <%= @quiz.total_questions %>
+    </div>
+    <div class="accuracy">
+      正答率: <%= @quiz.accuracy_rate %>%
+    </div>
+  </div>
+  <div class="questions-review">
+    <h3>問題別結果</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>番号</th>
+          <th>単語</th>
+          <th>あなたの答え</th>
+          <th>正解</th>
+          <th>結果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @quiz_questions.each_with_index do |question, index| %>
+          <tr class="<%= question.is_correct ? 'correct-row' : 'incorrect-row' %>">
+            <td><%= index + 1 %></td>
+            <td><strong><%= question.word.japanese %></strong></td>
+            <td><%= question.user_answer || '未回答' %></td>
+            <td><%= question.correct_answer %></td>
+            <td>
+              <% if question.is_correct %>
+                <span class="badge-success">✓ 正解</span>
+              <% else %>
+                <span class="badge-danger">✗ 不正解</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="result-actions">
+    <%= button_to "もう一度やる", restart_quiz_path(@quiz), method: :post, class: "btn btn-warning btn-large" %>
+    <%= link_to "ランキングはこちら", show_rankings_path, class: "btn btn-primary btn-large" %>
+    <%= link_to "クイズメニューへ", quizzes_path, class: "btn btn-secondary btn-large" %>
+  </div>
+</div>

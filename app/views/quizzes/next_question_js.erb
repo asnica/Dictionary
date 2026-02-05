@@ -1,0 +1,20 @@
+document.getElementById('question-number').textContent = '<%= @question_number %>';
+
+document.getElementById('quiz-content').innerHTML = '<%= j render "question", question: @current_question, question_number: @question_number %>';
+
+<% if @quiz.last_question? %>
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.innerHTML = '採点する';
+  nextBtn.classList.remove('btn-primary');
+  nextBtn.classList.add('btn-success');
+  nextBtn.formAction = '<%= grade_quiz_path(@quiz) %>';
+  nextBtn.dataset.remote = 'false';
+<% end %>
+
+<% if @quiz.first_question? %>
+  const prevBtn = document.getElementById('prev-btn');
+  if (prevBtn) prevBtn.style.display = 'none';
+<% else %>
+  const prevBtn = document.getElementById('prev-btn');
+  if (prevBtn) prevBtn.style.display = 'block';
+<% end %>

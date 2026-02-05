@@ -1,0 +1,60 @@
+<!-- app/views/quizzes/past_quizzes.html.erb -->
+<div class="past-quizzes-container">
+  <div class="page-header">
+    <h1>過去のクイズ記録</h1>
+    <div class="header-actions">
+      <%= link_to "← クイズメニューへ", quizzes_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <% if @completed_quizzes.any? %>
+    <div class="tags-table">
+      <table>
+        <thead>
+          <tr>
+            <th>番号</th>
+            <th>完了時刻</th>
+            <th>点数</th>
+            <th>正答率</th>
+            <th>所要時間</th>
+            <th>アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @completed_quizzes.each_with_index do |quiz, index| %>
+            <tr>
+              <td><%= index + 1 + (@completed_quizzes.current_page - 1) * @completed_quizzes.limit_value %></td>
+              <td><%= quiz.completed_at.strftime('%Y-%m-%d %H:%M') %></td>
+              <td><%= quiz.score %> / <%= quiz.total_questions %></td>
+              <td>
+                <div class="progress">
+                  <div class="progress-bar <%= quiz.accuracy_rate >= 80 ? 'bg-success' : 'bg-warning' %>" 
+                       style="width: <%= quiz.accuracy_rate %>%">
+                    <%= quiz.accuracy_rate %>%
+                  </div>
+                </div>
+              </td>
+              <td>
+                <% if quiz.started_at && quiz.completed_at %>
+                  <%= distance_of_time_in_words(quiz.started_at, quiz.completed_at) %>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td>
+                <%= link_to "結果を見る", result_quiz_path(quiz), class: "btn btn-sm btn-primary" %>
+                <%= button_to "もう一度", restart_quiz_path(quiz), method: :post, class: "btn btn-sm btn-warning" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= paginate @completed_quizzes %>
+  <% else %>
+    <div class="empty-message">
+      <p>まだ完了したクイズがありません。</p>
+    </div>
+  <% end %>
+</div>

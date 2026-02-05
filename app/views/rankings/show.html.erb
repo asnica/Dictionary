@@ -1,0 +1,42 @@
+<div class = "ranking-container">
+  <div class="page-header">
+    <h1>単語タグマスタ</h1>
+  </div>
+  <%=link_to "メニューへ戻る", root_path, class: "btn btn-secondary" %>
+  <%=link_to "クイズメニューへ戻る", quizzes_path, class: "btn btn-primary" %>
+</div>
+</div>
+<div class = "ranking-info">
+  <%if @user_rank != "Unranked"%>
+    <p>お疲れ様でした!</p>
+    <p>あなたの成績は、 <strong><%=@user_quiz_count%></strong>問中 <strong><%=@user_avg_score%></strong>点です。</p>
+  <%else%>
+    <p>あなたの成績は、まだランキングに反映されていません。</p>
+  <% end %>
+</div>
+<% if @rankings.any?%>
+  <div class= "ranking-table">
+    <table>
+      <thead>
+        <tr>
+          <th class = "rank-column">順位</th>
+          <th class = "name-column">名前</th>
+          <th class = "score-column">正解率</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rankings.each_with_index do |ranking, index| %>
+          <tr class = "<%= 'current-user-row' if ranking.id == current_user.id %>">
+            <td class = "rank-column"><%= index + 1 %></td>
+            <td class = "name-column"><%= ranking.name %></td>
+            <td class = "score-column"><%= ranking.avg_accuracy.round(2) %>%</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= paginate @rankings %>
+<% else %>
+  <p>ランキングデータがありません。</p>
+<% end %>
+</div>

@@ -23,4 +23,23 @@ Rails.application.routes.draw do
       get :export_csv
     end
   end
+
+  resources :quizzes do
+    collection do
+      get :past_quizzes
+    end
+
+
+    member do
+      post :submit_answer
+      patch :next_question
+      patch :previous_question
+      post :grade
+      get :result
+      post :restart
+    end
+  end
+
+
+  resource :ranking, only: [ :show ], controller: "rankings"
 end

@@ -3,7 +3,7 @@
     <h1>単語新規登録</h1>
     <%= link_to "←一覧に戻る", words_path, class: "btn btn-secondary" %>
   </div>
-  <%= form_with model: @word, local: true , html: {multipart: true} do |f| %>
+  <%= form_with model: @word, local: true, data: { turbo: false }, html: {multipart: true} do |f| %>
     <% if @word.errors.any? %>
       <div class="error-box">
         <h3><%=pluralize(@word.errors.count, "error") %>が発生しました：</h3>

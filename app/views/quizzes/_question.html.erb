@@ -1,0 +1,18 @@
+<!-- app/views/quizzes/_question.html.erb -->
+<div class="question-card">
+  <div class="word-display">
+    <h3>この単語の意味は？</h3>
+    <div class="word-text">
+      <%= question.word.japanese %>
+    </div>
+  </div>
+  <div class="choices-container">
+    <% question.choices.each_with_index do |choice, index| %>
+      <button class="choice-btn <%= 'selected' if question.user_answer == choice %>" 
+              data-answer="<%= choice %>">
+        <%= index + 1 %>. <%= choice %>
+      </button>
+    <% end %>
+  </div>
+ 
+</div>
