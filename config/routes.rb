@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       post :grade
       get :result
       post :restart
+      post :pause
     end
   end
 

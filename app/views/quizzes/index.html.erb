@@ -9,9 +9,11 @@
     </div>
   <% else %>
     <div class="quiz-actions">
-      <%= button_to "新しく単語帳を始める", quizzes_path, method: :post, class: "btn btn-primary btn-large" %>
       <% if @current_quiz %>
-        <%= link_to "続きから", quiz_path(@current_quiz), class: "btn btn-success btn-large" %>
+        <%last_worked = @current_quiz.recently_worked&.strftime('%Y-%m-%d %H:%M') %>
+        <%= link_to "続きから: #{last_worked}", quiz_path(@current_quiz), class: "btn btn-success btn-large" %>
+      <% else %>
+        <%= button_to "新しく単語帳を始める", quizzes_path, method: :post, class: "btn btn-primary btn-large" %>
       <% end %>
     </div>
   <% end %>

@@ -18,6 +18,8 @@ class User < ApplicationRecord
       quizzes.find_by(status: "in_progress")
     end
 
+
+
     def has_quiz_in_progress?
       current_quiz.present?
     end

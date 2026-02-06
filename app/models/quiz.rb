@@ -5,8 +5,12 @@ class Quiz < ApplicationRecord
   has_many :words, through: :quiz_questions
 
   enum :status, [ :not_started, :in_progress, :completed ], default: :not_started
+
   validates :total_questions, presence: true, numericality: { only_integer: true, greater_than: 0 }
+
   validates :current_questions_number, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
+
   scope :recently_completed, -> { where(status: "completed").order(completed_at: :desc) }
   scope :in_progress_for_user, ->(user_id) { where(user_id: user_id, status: "in_progress") }
 
@@ -42,6 +46,7 @@ class Quiz < ApplicationRecord
     end
   end
 
+
   def grade!
     correct_count = quiz_questions.where(is_correct: true).count
     update!(
@@ -50,6 +55,8 @@ class Quiz < ApplicationRecord
       completed_at: Time.current
     )
   end
+
+
 
   def accuracy_rate
     return 0 if score.nil? || total_questions.zero?

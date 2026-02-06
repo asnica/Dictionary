@@ -1,7 +1,7 @@
 
 class QuizzesController < ApplicationController
  before_action :authenticate_user!
- before_action :set_quiz, only: [ :show, :submit_answer, :next_question, :previous_question, :grade, :result, :restart ]
+ before_action :set_quiz, only: [ :show, :submit_answer, :next_question, :previous_question, :grade, :result, :restart, :pause ]
 
  def index
    @current_quiz = current_user.current_quiz
@@ -22,6 +22,13 @@ class QuizzesController < ApplicationController
    )
    @quiz.generate_questions!
    redirect_to quiz_path(@quiz), notice: "新しいクイズを開始しました！"
+ end
+
+ def pause
+   @current_question = @quiz.current_question
+   @question_number = @quiz.current_questions_number + 1
+   @quiz.update!(status: "in_progress", recently_worked: Time.current)
+   redirect_to quizzes_path, notice: "クイズを中断しました。続きから再開できます。"
  end
 
  def show
@@ -73,6 +80,7 @@ class QuizzesController < ApplicationController
    @quiz_questions = @quiz.quiz_questions.includes(:word).order(:id)
  end
 
+
  def restart
    new_quiz = current_user.quizzes.create!(
     total_questions: @quiz.total_questions,
@@ -88,6 +96,11 @@ class QuizzesController < ApplicationController
    new_quiz.update!(status: "in_progress", started_at: Time.current)
    redirect_to quiz_path(new_quiz), notice: "クイズを再開しました！"
  end
+
+
+
+
+
 
  def past_quizzes
    @completed_quizzes = current_user.completed_quizzes.page(params[:page]).per(10)

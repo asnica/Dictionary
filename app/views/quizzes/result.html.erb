@@ -43,7 +43,7 @@
   </div>
   <div class="result-actions">
     <%= button_to "もう一度やる", restart_quiz_path(@quiz), method: :post, class: "btn btn-warning btn-large" %>
-    <%= link_to "ランキングはこちら", show_rankings_path, class: "btn btn-primary btn-large" %>
+    <%= link_to "ランキングはこちら", ranking_path,  class: "btn btn-primary btn-large" %>
     <%= link_to "クイズメニューへ", quizzes_path, class: "btn btn-secondary btn-large" %>
   </div>
 </div>

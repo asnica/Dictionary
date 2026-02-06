@@ -6,17 +6,14 @@
       問題 <span id="question-number"><%= @question_number %></span> / <%= @quiz.total_questions %>
     </div>
   </div>
-
   <div id="quiz-content" class="quiz-content">
     <%= render 'question', question: @current_question, question_number: @question_number %>
   </div>
-
   <div class="quiz-actions">
     <% unless @quiz.first_question? %>
       <%= button_to "← 前の問題へ", previous_question_quiz_path(@quiz), 
           method: :patch, remote: true, class: "btn btn-secondary", id: "prev-btn" %>
     <% end %>
-
     <% if @quiz.last_question? %>
       <%= button_to "採点する", grade_quiz_path(@quiz), 
           method: :post, class: "btn btn-success btn-large", id: "next-btn" %>
@@ -25,38 +22,48 @@
           method: :patch, remote: true, class: "btn btn-primary btn-large", id: "next-btn" %>
     <% end %>
   </div>
-
   <div class="quiz-footer">
-    <%= link_to "中断する", quizzes_path, class: "btn btn-secondary" %>
-  </div>
+<%= button_to "中断する", pause_quiz_path(@quiz), method: :post, class: "btn btn-secondary" %>  </div>
 </div>
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('choice-btn')) {
-      const choices = document.querySelectorAll('.choice-btn');
-      choices.forEach(btn => btn.classList.remove('selected'));
-      e.target.classList.add('selected');
-      
-      const answer = e.target.dataset.answer;
-      submitAnswer(answer);
-    }
-  });
-});
+  document.addEventListener('DOMContentLoaded', function() {
+    // 기존 choice-btn 클릭 이벤트
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('choice-btn')) {
+        const choices = document.querySelectorAll('.choice-btn');
+        choices.forEach(btn => btn.classList.remove('selected'));
+        e.target.classList.add('selected');
+        const answer = e.target.dataset.answer;
+        submitAnswer(answer);
+      }
+    });
 
-function submitAnswer(answer) {
-  fetch('<%= submit_answer_quiz_path(@quiz) %>', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
-    },
-    body: JSON.stringify({ answer: answer })
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Answer submitted:', data);
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a');
+      const button = e.target.closest('button');
+      
+      if (link || (button && button.type !== 'button')) {
+        navigator.sendBeacon('<%= pause_quiz_path(@quiz) %>', '');
+      }
+    });
+
+    window.addEventListener('beforeunload', function() {
+      navigator.sendBeacon('<%= pause_quiz_path(@quiz) %>', '');
+    });
   });
-}
+
+  function submitAnswer(answer) {
+    fetch('<%= submit_answer_quiz_path(@quiz) %>', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ answer: answer })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Answer submitted:', data);
+    });
+  }
 </script>
