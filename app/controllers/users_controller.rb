@@ -17,8 +17,13 @@ class UsersController < ApplicationController
     #
 
     if @user.save
-      sessions[:user_id] = @user.id
+      session[:user_id] = @user.id
 
+      UserMailer.welcome_email(@user).deliver_now
+
+      redirect_to root_path, notice: "会員登録に成功しました！"
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
