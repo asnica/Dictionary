@@ -46,6 +46,12 @@
 }
 
 
+.signup-footer p {
+  
+  font-size: 0.9rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

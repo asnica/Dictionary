@@ -44,7 +44,8 @@ Rails.application.configure do
     user_name: ENV["GMAIL_USERNAME"],
     password: ENV["GMAIL_PASSWORD"],
     authentication: "plain",
-    enable_starttls_auto: true
+    enable_starttls_auto: true,
+    openssl_verify_mode: OpenSSL::SSL::VERIFY_NONE
 }
 
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
