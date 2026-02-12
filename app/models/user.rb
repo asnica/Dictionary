@@ -14,6 +14,9 @@ class User < ApplicationRecord
     has_many :word_tags, dependent: :destroy
     before_save :downcase_email
 
+
+
+
     def current_quiz
       quizzes.find_by(status: "in_progress")
     end

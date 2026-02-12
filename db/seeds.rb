@@ -6,6 +6,7 @@ QuizQuestion.delete_all
 Quiz.delete_all
 User.delete_all
 Word.delete_all
+WordTag.delete_all
 
 puts "Creating words.."
 start_time = Time.current
@@ -39,8 +40,21 @@ words_data = [
 
 ]
 
+system_tags = [
+  { name: "N5", color: "#4CAF50" },
+  { name: "N4", color: "#8BC34A" },
+  { name: "N3", color: "#CDDC39" },
+  { name: "N2", color: "#FFC107" },
+  { name: "N1", color: "#FF5722" }
+]
+
+system_tags.each do |tag|
+  WordTag.create(name: tag[:name], user_id: nil, color: tag[:color])
+end
+
 words = Word.create!(words_data)
 password_digest = BCrypt::Password.create("password123")
+
 elapsed = (Time.current - start_time).round(2)
 puts "Created #{words.count} words (#{elapsed}s)"
 
@@ -155,3 +169,6 @@ puts "Users: #{User.count}"
 puts "Quizzes: #{Quiz.count}"
 puts "Quiz Questions: #{QuizQuestion.count}"
 puts "Total time: #{total_elapsed}s"
+
+User.create(name: "Admin User", email: "admin@example.com", password: "password")
+puts "Created admin user with email"

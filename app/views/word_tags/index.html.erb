@@ -1,12 +1,11 @@
 <div class="container">
- <div class="page-header">
-  <h1>単語タグマスタ</h1>
-  </div class="header-actions">
-   <%=link_to "メニューへ戻る", root_path, class: "btn btn-secondary" %>
-   <%=link_to "新規登録", new_word_tag_path, class: "btn btn-primary" %>
+  <div class="page-header">
+    <h1>単語タグマスタ</h1>
+    <div class="header-actions">
+      <%=link_to "メニューへ戻る", root_path, class: "btn btn-secondary" %>
+      <%=link_to "新規登録", new_word_tag_path, class: "btn btn-primary" %>
+    </div>
   </div>
-  </div>
-
   <div class= "search-box">
     <%=form_with url: word_tags_path, method: :get, local: true do |f| %>
       <%=f.text_field :search,
@@ -15,13 +14,12 @@
          class: "form-control" %>
       <%=f.submit "検索", class:"btn btn-primary" %>
       <%if params[:search].present? %>
-          <%=link_to "クリア", word_tags_path, class: "btn btn-secondary" %>
-          <%end%>
-        <%end%>
-
-    <section class="tags-section">
-         
-    <h2>システムタグ</h2>
+        <%=link_to "クリア", word_tags_path, class: "btn btn-secondary" %>
+      <%end%>
+    <%end%>
+  </div>
+  <section class="tags-section">
+    <h2 >システムタグ</h2>
     <div class="tags-table">
       <table>
         <thead>
@@ -49,7 +47,6 @@
       </table>
     </div>
   </section>
-
   <section class="tags-section">
     <h2>個人タグ</h2>
     <% if @custom_tags.any? %>
@@ -96,8 +93,3 @@
     <% end %>
   </section>
 </div>
-
-
-              
-
-  

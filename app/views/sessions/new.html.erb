@@ -1,7 +1,11 @@
 <div class = "login-container">
     <div class = "login-card">
+        <div class = "login-header">
         <h1>ログイン</h1>
-        <%= form_with url: login_path, scope: :session do |f| %>
+        <p class = "subtitle"> メールアドレスとパスワードを入力してください</p>
+        </div>
+            
+        <%= form_with url: login_path, scope: :session , class: "login-form" do |f| %>
             <div class = "form-group">
                 <%=f.label :email, "メールアドレス" %>
                 <%=f.email_field :email, class: "form-control",placeholder: "example@email.com", required: true, autofocus: true %>
@@ -13,12 +17,12 @@
             </div>
 
             <div class = "form-actions">
-                <%=f.submit "ログイン", class: "btn btn-primary" %>
+                <%=f.submit "ログイン", class: "btn btn-primary"%>
             </div>
         <% end %>
 
         <div class = "login-footer">
-        <p>まだアカウントをお持ちでないですか？</p>
+        <p class = "subtitle"> メールアドレスとパスワードを入力してください</p>
         <%=link_to "新規登録", signup_path , class: "btn btn-secondary"%>
         </div>
 
