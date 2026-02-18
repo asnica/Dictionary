@@ -1,7 +1,7 @@
 class WordsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_word, only: [ :show, :edit, :update, :destroy ]
-
+  before_action :is_my_word?, only: [ :edit, :update, :destroy ]
   def index
     @words = Word.all
 
@@ -24,8 +24,10 @@ class WordsController < ApplicationController
     @words = @words.distinct.order(:japanese).page(params[:page]).per(10)
     @word_tags = WordTag.system_tags.order(:name)
   end
+
   def show
   end
+
   def new
     @word ||= Word.new
     @word_tags = WordTag.for_user(current_user).order(:name)
@@ -36,6 +38,7 @@ class WordsController < ApplicationController
     @word = Word.new(word_params)
 
     if @word.save
+      current_user.user_words.create(word: @word)
       flash[:notice] = "単語を登録しました。"
       redirect_to words_path
     else
@@ -45,6 +48,7 @@ class WordsController < ApplicationController
     end
   end
 
+
   def edit
     @word_tags = WordTag.for_user(current_user).order(:name)
 
@@ -53,8 +57,9 @@ class WordsController < ApplicationController
     end
   end
 
+
   def update
-    if @word.update(word_params)
+    if is_my_word?(@word) && @word.update(word_params)
       flash[:notice]= "単語を更新しました。"
       redirect_to words_path
     else
@@ -64,11 +69,17 @@ class WordsController < ApplicationController
     end
   end
 
+
     def destroy
-      @word.destroy
-      flash[:notice] = "単語を削除しました。"
+      if is_my_word?(@word)
+        @word.destroy
+        flash[:notice] = "単語を削除しました。"
+      else
+        flash[:alert] = "他のユーザーの単語は削除できません。"
+      end
       redirect_to words_path
     end
+
 
     def export_csv
       @words = Word.all
@@ -101,13 +112,25 @@ class WordsController < ApplicationController
 
       send_data csv_data,
         filename: "words_#{Time.current.strftime('%Y%m%d_%H%M%S')}.csv",
-        type: "text/csv; charset=UTF-8",
+        type: "text/csv; charset=shift_jis",
         disposition: "attachment"
     end
+
+
+
+
+    def is_my_word?
+      @word.user_words.exists?(user_id: current_user.id)
+    end
+
+
+
   private
+
   def set_word
     @word = Word.find(params[:id])
   end
+
 
   def word_params
     params.require(:word).permit(

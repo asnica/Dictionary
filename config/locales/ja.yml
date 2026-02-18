@@ -1,0 +1,14 @@
+ja:
+  activerecord:
+    errors:
+      models:
+        word:
+          attributes:
+            japanese:
+              blank: "日本語を入力してください。"
+              taken: "この日本語は既に登録されています。"
+            english:
+              blank: "英語を入力してください。"
+            image:
+              byte_size: "画像は5MB以下にしてください。"
+              content_type: "画像はJPEG、PNG、GIF形式にしてください。"

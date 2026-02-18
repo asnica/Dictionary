@@ -2,7 +2,7 @@ class WordTagsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_word_tag, only: [ :show, :edit, :update, :destroy ]
   before_action :authorize_user!, only: [ :edit, :update, :destroy ]
-
+  before_action :is_my_tag?, only: [ :edit, :update, :destroy ]
   def index
     @system_tags = WordTag.system_tags.order(:name)
 
@@ -60,6 +60,10 @@ class WordTagsController < ApplicationController
 
 
   private
+
+  def is_my_tag?
+    @word_tag.user_id == current_user.id
+  end
 
   def set_word_tag
     @word_tag = WordTag.find(params[:id])

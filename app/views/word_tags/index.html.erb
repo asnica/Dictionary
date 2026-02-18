@@ -71,11 +71,13 @@
                 <td><%= tag.description %></td>
                 <td><%= tag.words_count %></td>
                 <td>
-                  <%= link_to "編集", edit_word_tag_path(tag), class: "btn btn-sm btn-primary" %>
-                  <%= button_to "削除", word_tag_path(tag), 
-                                method: :delete, 
-                                data: { confirm: "削除しますか？" },
-                                class: "btn btn-sm btn-danger" %>
+                  <% if tag.user == current_user %>
+                    <%= link_to "編集", edit_word_tag_path(tag), class: "btn btn-sm btn-primary" %>
+                    <%= button_to "削除", word_tag_path(tag), 
+                                  method: :delete, 
+                                  data: { confirm: "削除しますか？" },
+                                  class: "btn btn-sm btn-danger" %>
+                  <% end %>
                 </td>
               </tr>
             <% end %>

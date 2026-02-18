@@ -97,9 +97,14 @@
                   <span class="text-muted">-</span>
                 <% end %>
               </td>
+             
               <td class="action-buttons">
+                 <% if word.user_words.exists?(user_id: current_user.id) %>
                 <%= link_to "編集", edit_word_path(word), class: "btn btn-sm btn-primary" %>
                 <%= button_to "削除", word_path(word), method: :delete, data: {confirm: "削除しますか？関連する類義語も削除されます。"}, class: "btn btn-sm btn-danger" %>
+                <% else %>
+                <span class="text-muted">-</span>
+                <% end %>
               </td>
             </tr>
           <% end %>
