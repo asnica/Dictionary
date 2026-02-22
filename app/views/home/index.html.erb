@@ -15,9 +15,18 @@
     </div>
     
      <div class="menu-list">
-      <%= link_to quizzes_path, class: "menu-item" do %>
+      <%= link_to quiz_sessions_path, class: "menu-item" do %>
       <h2>問題集</h2>
       <p>クイズ機能</p>
+    <% end %>
+
+
+
+
+    <div class="menu-list">
+      <%= link_to ranking_path, class: "menu-item" do %>
+      <h2> ランキング</h2>
+      <p>ユーザーのクイズスコアランキング</p>
     <% end %>
     </div>
   </div>

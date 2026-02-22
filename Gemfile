@@ -61,7 +61,6 @@ group :development, :test do
   gem "database_cleaner-active_record"
 
 
-
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 
@@ -73,6 +72,8 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "htmlbeautifier"
+
+  gem "letter_opener"
 end
 
 group :test do

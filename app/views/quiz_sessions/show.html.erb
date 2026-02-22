@@ -1,0 +1,48 @@
+<div class="quiz-result">
+
+  <header class="result-header">
+    <h1>結果</h1>
+    <div class="result-score">
+      <span class="score-number"><%= @session.score %></span>
+      <span class="score-divider">/</span>
+      <span class="score-total"><%= @session.word_order.size %></span>
+      <span class="score-label">点</span>
+    </div>
+    <p class="result-date"><%= @session.recently_worked.strftime("%Y年%m月%d日 %H:%M") %></p>
+  </header>
+
+  <div class="answer-list">
+    <% @session.user_answers.includes(:word).each_with_index do |answer, i| %>
+      <div class="answer-row <%= answer.is_correct ? 'correct' : 'incorrect' %>">
+
+        <span class="answer-index"><%= i + 1 %></span>
+
+        <div class="answer-word">
+          <span class="japanese"><%= answer.word.japanese %></span>
+        </div>
+
+        <div class="answer-detail">
+         
+          <span class="correct-answer"><%= answer.word.reading %></span>
+
+          <% unless answer.is_correct %>
+            <% if answer.selected_answer.nil? %>
+              <span class="selected-answer unanswered">未回答</span>
+            <% else %>
+              <span class="selected-answer wrong"><%= answer.selected_answer %></span>
+            <% end %>
+          <% end %>
+        </div>
+
+        <span class="answer-mark"><%= answer.is_correct ? "○" : "✗" %></span>
+
+      </div>
+    <% end %>
+  </div>
+
+  <div class="result-actions">
+    <%= button_to "もう一度", retry_quiz_session_path(@session), method: :post, class: "btn btn-primary" %>
+    <%= link_to "一覧へ", quiz_sessions_path, class: "btn btn-secondary" %>
+  </div>
+
+</div>

@@ -3,8 +3,7 @@ class User < ApplicationRecord
 
     has_many :user_words, dependent: :destroy
     has_many :words, through: :user_words
-    has_many :quizzes, dependent: :destroy
-
+    has_many :quiz_sessions, dependent: :destroy
 
     validates :name, presence: true, length: { maximum: 50 }
     validates :password, presence: true, length: { minimum: 6 }

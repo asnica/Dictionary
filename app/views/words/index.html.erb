@@ -1,3 +1,4 @@
+
 <div class="container">
   <div class="page-header">
     <h1>単語マスタ</h1>
@@ -9,7 +10,7 @@
   </div>
   
   <div class="search-box">
-    <%= form_with url: words_path, method: :get, local: true do |f|%>
+    <%= form_with url: words_path, method: :get, local: true, data: {turbo: false} do |f|%>
       <div class="search-row">  <!-- 横並びレイアウト -->
         <div class="form-group">
           <%= f.label "search[japanese]", "単語"%>
@@ -51,6 +52,7 @@
       <table>
         <thead>
           <tr>
+            <th>製作者</th>
             <th>画像</th>
             <th>単語</th>
             <th>読み</th>
@@ -63,6 +65,7 @@
         <tbody>
           <% @words.each do |word|%>
             <tr>
+              <td><%= word.user_words.first&.user&.name || "不明" %></td>
               <td class="text-center">
                 <% if word.image.attached? %>
                   <%= image_tag word.image.variant(resize_to_limit: [50,50]), class: "word-thumbnail" %>
@@ -97,10 +100,14 @@
                   <span class="text-muted">-</span>
                 <% end %>
               </td>
+              <%if UserWord.exists?(user_id: current_user.id, word_id: word.id)%>
               <td class="action-buttons">
-                <%= link_to "編集", edit_word_path(word), class: "btn btn-sm btn-primary" %>
-                <%= button_to "削除", word_path(word), method: :delete, data: {confirm: "削除しますか？関連する類義語も削除されます。"}, class: "btn btn-sm btn-danger" %>
+                <%= link_to "編集", edit_word_path(word), class: "btn btn-sm btn-primary" , data: {turbo:false}%>
+                <%= button_to "削除", word_path(word), method: :delete, data: {confirm: "削除しますか？関連する類義語も削除されます。"}, class: "btn btn-sm btn-danger",data: {turbo:false} %>
               </td>
+              <% else %>
+                <td class="text-muted">-</td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>

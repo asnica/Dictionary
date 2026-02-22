@@ -1,6 +1,5 @@
 class WordTagsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_word_tag, only: [ :show, :edit, :update, :destroy ]
   before_action :authorize_user!, only: [ :edit, :update, :destroy ]
 
   def index
@@ -61,20 +60,16 @@ class WordTagsController < ApplicationController
 
   private
 
-  def set_word_tag
-    @word_tag = WordTag.find(params[:id])
-  end
+
 
   def authorize_user!
-    if @word_tag.system_tag?
-      flash[:alert] = "システムタグは変更できません。"
-      redirect_to word_tags_path
-      return
-    end
-
-    unless @word_tag.user ==current_user
-      flash[:alert] = "他のユーザーのタグは変更できません。"
-      redirect_to word_tags_path
+    tag = current_user.word_tags.find_by(id: params[:id])
+    if tag.system_tag?
+      redirect_to word_tags_path, alert: "システムタグは編集できません。"
+    elsif tag.id != params[:id].to_i
+      redirect_to word_tags_path, alert: "アクセスが許可されていません。"
+    else
+      @word_tag = tag
     end
   end
 

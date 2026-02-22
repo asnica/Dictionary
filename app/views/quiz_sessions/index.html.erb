@@ -1,0 +1,56 @@
+<div class="quiz-container">
+  <header class="quiz-header">
+    <h1>単語クイズ</h1>
+    <%= button_to "新しいクイズ", quiz_sessions_path, method: :post, class: "btn btn-primary" %>
+  </header>
+  
+  <section class="session-section">
+    <h2>進行中</h2>
+    <% if @in_progress.any? %>
+      <% @in_progress.each do |session| %>
+        <div class="session-card in-progress">
+          <div class="session-meta">
+            <span class="session-progress">
+              <%= session.current_index %> / <%= session.word_order.size %>
+            </span>
+            <span class="session-date">
+              <%= session.recently_worked.strftime("%Y-%m-%d %H:%M") %>
+            </span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: <%= (session.current_index.to_f / session.word_order.size * 100).round(2) %>%"></div>
+            </div>
+            <%= link_to "続きをやる", play_quiz_session_path(session), class: "btn btn-secondary" %>
+            <%= button_to "削除", quiz_session_path(session), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "btn btn-danger" %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="empty-state">進行中のセッションはありません</p>
+    <% end %>
+  </section>
+
+  <section class="session-section">
+    <h2>完了済み</h2>
+    <% if @completed.any? %>
+      <% @completed.each do |session| %>
+        <div class="session-card completed">
+          <div class="session-meta">
+            <span class="session-score">
+              <%= session.score %> / <%= session.word_order.size %>点
+            </span>
+            <span class="session-date">
+              <%= session.recently_worked.strftime("%Y-%m-%d %H:%M") %>
+            </span>
+          </div>
+          <div class="session-actions">
+            <%= link_to "結果を見る", quiz_session_path(session), class: "btn btn-sm btn-primary" %>
+            <%= button_to "もう一度", retry_quiz_session_path(session), method: :post, class: "btn btn-sm btn-warning" %>
+
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="empty-state">完了済みのセッションはありません</p>
+    <% end %>
+  </section>
+</div>

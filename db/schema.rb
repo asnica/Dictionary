@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_10_032942) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_22_144422) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,32 +42,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_032942) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "quiz_questions", force: :cascade do |t|
-    t.bigint "quiz_id", null: false
-    t.bigint "word_id", null: false
-    t.string "user_answer"
-    t.boolean "is_correct"
-    t.json "choices"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["quiz_id", "word_id"], name: "index_quiz_questions_on_quiz_id_and_word_id", unique: true
-    t.index ["quiz_id"], name: "index_quiz_questions_on_quiz_id"
-    t.index ["word_id"], name: "index_quiz_questions_on_word_id"
-  end
-
-  create_table "quizzes", force: :cascade do |t|
+  create_table "quiz_sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "status"
-    t.integer "total_questions"
-    t.integer "current_questions_number"
-    t.integer "score"
-    t.datetime "started_at"
-    t.datetime "completed_at"
+    t.integer "word_order", default: [], array: true
+    t.integer "current_index", default: 0
+    t.string "status", default: "in_progress"
+    t.integer "score", default: 0
+    t.datetime "recently_worked"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "recently_worked"
-    t.index ["user_id", "status", "score"], name: "index_quizzes_on_user_status_score"
-    t.index ["user_id"], name: "index_quizzes_on_user_id"
+    t.index ["user_id"], name: "index_quiz_sessions_on_user_id"
   end
 
   create_table "synonyms", force: :cascade do |t|
@@ -78,13 +62,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_032942) do
     t.index ["word_id"], name: "index_synonyms_on_word_id"
   end
 
+  create_table "user_answers", force: :cascade do |t|
+    t.bigint "quiz_session_id", null: false
+    t.bigint "word_id", null: false
+    t.string "selected_answer"
+    t.boolean "is_correct", null: false
+    t.index ["quiz_session_id"], name: "index_user_answers_on_quiz_session_id"
+    t.index ["word_id"], name: "index_user_answers_on_word_id"
+  end
+
   create_table "user_words", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "word_id", null: false
-    t.boolean "memorized"
-    t.integer "quiz_count"
-    t.integer "correct_count"
-    t.datetime "last_studied_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_user_words_on_user_id"
@@ -136,10 +125,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_032942) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "quiz_questions", "quizzes"
-  add_foreign_key "quiz_questions", "words"
-  add_foreign_key "quizzes", "users"
+  add_foreign_key "quiz_sessions", "users"
   add_foreign_key "synonyms", "words"
+  add_foreign_key "user_answers", "quiz_sessions"
+  add_foreign_key "user_answers", "words"
   add_foreign_key "user_words", "users"
   add_foreign_key "user_words", "words"
   add_foreign_key "word_taggings", "word_tags"

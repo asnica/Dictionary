@@ -3,7 +3,8 @@
     <%= link_to "ホーム", root_path, class: "nav-link" %>
     <%= link_to "タグ", word_tags_path, class: "nav-link" %>
     <%= link_to "単語", words_path, class: "nav-link" %>
-    <%= link_to "問題集", quizzes_path, class: "nav-link"%>
+    <%= link_to "問題集", quiz_sessions_path, class: "nav-link"%>
+    <%= link_to "ランキング", ranking_path, class: "nav-link"%>
     
     <div class="nav-right">
       <span class="user-name"><%= current_user.name %></span>

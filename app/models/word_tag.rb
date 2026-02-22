@@ -7,6 +7,7 @@ class WordTag < ApplicationRecord
   validates :name, uniqueness: true, if: :system_tag?
   validates :name, uniqueness: { scope: :user_id }, if: :custom_tag?
 
+
   scope :system_tags, -> { where(user_id: nil) }
   scope :custom_tags, -> { where.not(user_id: nil) }
 

@@ -51,21 +51,12 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>🎉 単語帳アプリ</h1>
+        <h1>🎉 単語帳の新規登録のお知らせ</h1>
       </div>
       
       <div class="content">
-        <p><strong><%= @user.name %></strong>様</p>
-        
-        <p>会員登録に成功しました。</p>
-        
-        <div class="info-box">
-          <p><strong>登録メールアドレス:</strong> <%= @user.email %></p>
-        </div>
-        
-        <p>これから単語帳アプリで楽しく学習を始めましょう！</p>
-        
-        <p>単語の登録、クイズ機能などをご利用いただけます。</p>
+        <p><%= @user.name %>様の会員登録に成功しました。</p>
+        <p>登録メイルのアドレス: <%= @user.email %></p>
       </div>
       
       <div class="footer">

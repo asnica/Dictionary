@@ -6,15 +6,6 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    # if @user.save
-
-    #   flash[:notice] = "会員登録に成功しました！"
-    #   redirect_to root_path
-    # else
-    #   flash.now[:alert] = "会員登録に失敗しました。"
-    #   render :new, status: :unprocessable_entity
-    # end
-    #
 
     if @user.save
       session[:user_id] = @user.id

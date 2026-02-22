@@ -24,21 +24,32 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :quizzes do
-    collection do
-      get :past_quizzes
-    end
+  # resources :quizzes do
+  #   collection do
+  #     get :past_quizzes
+  #   end
 
 
+  #   member do
+  #     post :submit_answer
+  #     patch :next_question
+  #     patch :previous_question
+  #     post :grade
+  #     get :result
+  #     post :restart
+  #     post :pause
+  #   end
+  # end
+  #
+
+  resources :quiz_sessions, only: [ :index, :create, :show, :destroy ] do
     member do
-      post :submit_answer
-      patch :next_question
-      patch :previous_question
-      post :grade
-      get :result
-      post :restart
-      post :pause
+      get :play
+      get :current_question
+      post :retry
+      post :previous
     end
+    resources :user_answers, only: [ :create ]
   end
 
 

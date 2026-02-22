@@ -1,6 +1,7 @@
 class WordsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_word, only: [ :show, :edit, :update, :destroy ]
+  before_action :authorize_word_edit, only: [ :edit, :update, :destroy ]
 
   def index
     @words = Word.all
@@ -21,11 +22,14 @@ class WordsController < ApplicationController
         @words = @words.joins(:word_taggings).where(word_taggings: { word_tag_id: search_params[:word_tag_id] })
       end
     end
+
     @words = @words.distinct.order(:japanese).page(params[:page]).per(10)
     @word_tags = WordTag.system_tags.order(:name)
   end
   def show
   end
+
+
   def new
     @word ||= Word.new
     @word_tags = WordTag.for_user(current_user).order(:name)
@@ -36,6 +40,7 @@ class WordsController < ApplicationController
     @word = Word.new(word_params)
 
     if @word.save
+      UserWord.create(user_id: current_user.id, word_id: @word.id)
       flash[:notice] = "単語を登録しました。"
       redirect_to words_path
     else
@@ -101,7 +106,7 @@ class WordsController < ApplicationController
 
       send_data csv_data,
         filename: "words_#{Time.current.strftime('%Y%m%d_%H%M%S')}.csv",
-        type: "text/csv; charset=UTF-8",
+        type: "text/csv; charset=shift_jis",
         disposition: "attachment"
     end
   private
@@ -118,5 +123,12 @@ class WordsController < ApplicationController
       word_tag_ids: [],
       synonyms_attributes: [ :id, :synonym_word, :_destroy ]
     )
+  end
+
+  def authorize_word_edit
+    unless UserWord.exists?(user_id: current_user.id, word_id: params[:id])
+    flash[:alert] = "この単語を編集する権限がありません。"
+    redirect_to words_path
+    end
   end
 end
