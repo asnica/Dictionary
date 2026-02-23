@@ -4,27 +4,7 @@ class WordsController < ApplicationController
   before_action :authorize_word_edit, only: [ :edit, :update, :destroy ]
 
   def index
-    @words = Word.all
-
-    if params[:search].present?
-       search_params = params[:search]
-
-      if search_params[:japanese].present?
-        @words = @words.where("japanese LIKE ?", "%#{search_params[:japanese]}%")
-
-      end
-
-      if search_params[:english].present?
-        @words = @words.where("english LIKE ?", "%#{search_params[:english]}%")
-      end
-
-      if search_params[:word_tag_id].present?
-        @words = @words.joins(:word_taggings).where(word_taggings: { word_tag_id: search_params[:word_tag_id] })
-      end
-    end
-
-    @words = @words.distinct.order(:japanese).page(params[:page]).per(10)
-    @word_tags = WordTag.system_tags.order(:name)
+    @words = filter_words.distinct.order(:japanese).page(params[:page]).per(10)
   end
   def show
   end
@@ -76,25 +56,7 @@ class WordsController < ApplicationController
     end
 
     def export_csv
-      @words = Word.all
-
-      if params[:search].present?
-        search_params = params[:search]
-
-        if search_params[:japanese].present?
-          @words = @words.where("japanese LIKE ?", "%#{search_params[:japanese]}%")
-        end
-        if search_params[:english].present?
-          @words = @words.where("english LIKE ?", "%#{search_params[:english]}%")
-        end
-
-        if search_params[:word_tag_id].present?
-          @words = @words.joins(:word_taggings).where(word_taggings: { word_tag_id: search_params[:word_tag_id] })
-        end
-
-      end
-
-      @words = @words.distinct.order(:japanese)
+      @words = filter_words.distinct.order(:japanese)
 
       require "csv"
       csv_data = CSV.generate(headers: true) do |csv|
@@ -110,6 +72,36 @@ class WordsController < ApplicationController
         disposition: "attachment"
     end
   private
+
+  def filter_words
+    words = Word.all
+
+    if params[:search].present?
+      search_params = params[:search]
+
+      if search_params[:japanese].present?
+        words = words.where("japanese LIKE ?", "%#{search_params[:japanese]}%")
+      end
+
+      if search_params[:english].present?
+        words = words.where("english LIKE ?", "%#{search_params[:english]}%")
+      end
+
+      if search_params[:word_tag_name].present?
+        words = words.joins(word_taggings: :word_tag).where("word_tags.name LIKE ?", "%#{search_params[:word_tag_name]}%")
+      end
+
+      if search_params[:synonym].present?
+        words = words.joins(:synonyms).where("synonyms.synonym_word LIKE ?", "%#{search_params[:synonym]}%")
+      end
+
+    end
+
+    words
+  end
+
+
+
   def set_word
     @word = Word.find(params[:id])
   end
@@ -120,8 +112,9 @@ class WordsController < ApplicationController
       :reading,
       :english,
       :image,
+      :remove_image,
       word_tag_ids: [],
-      synonyms_attributes: [ :id, :synonym_word, :_destroy ]
+    synonyms_attributes: [ :id, :synonym_word, :_destroy ]
     )
   end
 

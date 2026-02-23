@@ -14,6 +14,7 @@ class QuizSession < ApplicationRecord
     new_session = create!(
       user: user,
       word_order: previous_session.word_order,
+      choice_order: previous_session.choice_order,
       current_index: 0,
       status: "in_progress",
       score: 0,
@@ -25,9 +26,16 @@ class QuizSession < ApplicationRecord
 
   def self.start_new!(user)
     word_ids = Word.pluck(:id).sample(QUESTION_COUNT)
+
+    choices = word_ids.each_with_object({}) do |id, hash|
+      word = Word.find(id)
+      hash[id] = word.choices_for_quiz
+    end
+
     create!(
       user: user,
       word_order: word_ids,
+      choice_order: choices,
       current_index: 0,
       status: "in_progress",
       score: 0,
@@ -38,6 +46,7 @@ class QuizSession < ApplicationRecord
   def current_word
     Word.find(word_order[current_index])
   end
+
 
   def finished?
     current_index>= word_order.size
@@ -53,7 +62,6 @@ class QuizSession < ApplicationRecord
 
 
 
-
   def next!
     update!(
       current_index: current_index + 1,
@@ -61,6 +69,10 @@ class QuizSession < ApplicationRecord
 
 
     )
+  end
+
+  def current_choices
+    choice_order[word_order[current_index].to_s]
   end
 
   def previous!

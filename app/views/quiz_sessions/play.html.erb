@@ -1,189 +1,150 @@
-<div class = "quiz-play" data-session-id = "<%=@session.id%>">
-  <div class = "quiz-tobpar">
-    <div class = "progress-bar">
-      <div class="progress-fill" id = "progress-fill" style = "width: <%=( @session.current_index.to_f / @session.word_order.size * 100).round(2)%>%">
+<div class="quiz-play" data-session-id="<%= @session.id %>">
+
+  <div class="quiz-topbar">
+       <span class="progress-text">
+      <span id="current-index"><%= @session.current_index %></span> / <%= @session.word_order.size %> 問
+    </span>  
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"
+           style="width: <%= (@session.current_index.to_f / @session.word_order.size * 100).round(2) %>%">
       </div>
     </div>
-    <span class = "progress-text">
-        <span id = "current-index"><%=@session.current_index%></span> / <%=@session.word_order.size%>
-    </span>
+ 
+  </div>
 
-    <button id= "btn-pause" class = "btn-pause"">中断する</button>
+  <div class="quiz-body">
+    <div id="loading-state">
+      <p>読み込み中。。。</p>
     </div>
 
+    <div id="question-state" style="display: none;">
+      <p class="quiz-label">この言葉の読み方は？</p>
+      <div class="japanese-word" id="japanese-display"></div>
 
-    <div class = "quiz-body">
-        <div id = "loading-state">
-            <p>読み込み中。。。</p>
-        </div>
+      <div class="choices" id="choices-container"></div>
 
-        <div id = "question-state" style="display: none;">
-            <p class="quiz-label">この言葉の読み方は？</p>
-            <div class = "japanese-word" id = "japanese-display"></div>
+      <div class="quiz-actions">
+        <button id="btn-back"   class="btn-back">戻る</button>
+        <button id="btn-submit" class="btn-submit">決定</button>
+        <button id="btn-pause" class="btn-pause">中断する</button>
 
-            <div class = "choices" id = "choices-container">
-                <!-- 選択肢のボタンがここに動的に追加される -->
-            </div>
-
-            <div class = "quiz-actions">
-            <button id = "btn-back" class = "btn-back">戻る</button>
-            <button id = "btn-submit" class = "btn-submit" >決定</button>
-            </div>
-
-           
-
+      </div>
     </div>
-</div>
+  </div>  
+
+</div>  
 
 <script>
-    
-    document.addEventListener("DOMContentLoaded", function(){
+  document.addEventListener("DOMContentLoaded", function() {
 
-    
     const sessionId = document.querySelector(".quiz-play").dataset.sessionId;
-    const csrf = document.querySelector('meta[name="csrf-token"]').content;
-    const total = <%=@session.word_order.size%>;
-
+    const csrf      = document.querySelector('meta[name="csrf-token"]').content;
+    const total     = <%= @session.word_order.size %>;
 
     let selectedAnswer = null;
-    let isSubmitting= false;
-    let leaving = false;
+    let isSubmitting   = false;
+    let leaving        = false;
 
-    function showOnly(id){
-        ["loading-state","question-state"].forEach
-        (s => document.getElementById(s).style.display = s===id? "block":"none");
+    function showOnly(id) {
+      ["loading-state", "question-state"]
+        .forEach(s => document.getElementById(s).style.display = s === id ? "block" : "none");
     }
 
-
-
     async function loadQuestion() {
-        showOnly("loading-state");
-        selectedAnswer = null;
+      showOnly("loading-state");
+      selectedAnswer = null;
 
-        const res = await fetch(`/quiz_sessions/${sessionId}/current_question`);
-        const data = await res.json();
+      const res  = await fetch(`/quiz_sessions/${sessionId}/current_question`);
+      const data = await res.json();
 
-       if(data.finished){
+      if (data.finished) {
         leaving = true;
         window.location.href = `/quiz_sessions/${sessionId}`;
         return;
-       }
+      }
 
+      document.getElementById("current-index").textContent   = data.word_index;
+      document.getElementById("progress-fill").style.width   =
+        `${((data.word_index - 1) / total * 100).toFixed(0)}%`;
 
-       document.getElementById("current-index").textContent = data.word_index;
-       document.getElementById("progress-fill").style.width = 
-        `${((data.word_index -1) / total * 100).toFixed(0)}%`;
+      document.getElementById("btn-back").disabled = data.word_index <= 1;
 
-        document.getElementById("btn-back").disabled = data.word_index <= 1;
+      document.getElementById("japanese-display").textContent = data.japanese;
 
-        document.getElementById("japanese-display").textContent = data.japanese;
+      const container = document.getElementById("choices-container");
+      container.innerHTML = "";
+      data.choices.forEach(choice => {
+        const btn       = document.createElement("button");
+        btn.className   = "choice-btn";
+        btn.textContent = choice;
 
-
-
-
-        const container = document.getElementById("choices-container");
-        container.innerHTML = "";
-        data.choices.forEach(choice => {
-
-            const btn = document.createElement("button");
-            btn.className = "choice-btn";
-            btn.textContent = choice;
-
-            if(data.saved_answer && choice === data.saved_answer){
-                btn.classList.add("selected");
-                selectedAnswer = choice;
-            }
-            btn.addEventListener("click", () => selectChoice(btn, choice));
-            container.appendChild(btn);
-
-           
-        });
-        showOnly("question-state");
+        if (data.saved_answer && choice === data.saved_answer) {
+          btn.classList.add("selected");
+          selectedAnswer = choice;
         }
 
+        btn.addEventListener("click", () => selectChoice(btn, choice));
+        container.appendChild(btn);
+      });
 
+      showOnly("question-state");
+    }
 
-        function selectChoice(btn, answer){
-            document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("selected"));
-            btn.classList.add("selected");
-            selectedAnswer = answer;
+    function selectChoice(btn, answer) {
+      document.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedAnswer = answer;
+    }
 
-        }
+    document.getElementById("btn-submit").addEventListener("click", async () => {
+      if (isSubmitting) return;
 
-        document.getElementById("btn-submit").addEventListener("click", async () => {
-            if(isSubmitting) return;
+      if (!selectedAnswer) {
+        if (!confirm("未回答のまま次に進みますか？")) return;
+      }
 
-            if(!selectedAnswer) {
-                if (!confirm("未回答のまま次に進みますか？")) {
-                    return;
-                }
-            }
-            isSubmitting = true;
-         
+      isSubmitting = true;
 
-            const res = await fetch(`/quiz_sessions/${sessionId}/user_answers`,{
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-Token": csrf
-                },
-                body: JSON.stringify({selected_answer: selectedAnswer})
-            });
+      const res  = await fetch(`/quiz_sessions/${sessionId}/user_answers`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf },
+        body:    JSON.stringify({ selected_answer: selectedAnswer })
+      });
+      const data = await res.json();
+      isSubmitting = false;
 
-            const data = await res.json();
-            isSubmitting = false;
-            if (data.finished){
-                leaving = true;
-                window.location.href = `/quiz_sessions/${sessionId}`;
-                return;
-            }
-            
-            loadQuestion();
+      if (data.finished) {
+        leaving = true;
+        window.location.href = `/quiz_sessions/${sessionId}`;
+        return;
+      }
 
-
-
-        });
-
-        document.getElementById("btn-back").addEventListener("click", async () => {
-            await fetch(`/quiz_sessions/${sessionId}/previous`,{
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-Token": csrf
-                }
-            });
-             loadQuestion();
-        });
-
-
-
-
-        document.getElementById("btn-pause").addEventListener("click", () => {
-            if (confirm("本当に中断しますか？進行状況は保存されます。")) {
-                leaving = true;
-                window.location.href = "/quiz_sessions";
-            }
-        });
-
-        window.addEventListener("beforeunload", (e) => {
-            if (!leaving) {
-                e.preventDefault();
-                e.returnValue = "本当にこのページを離れますか？進行状況は保存されます。";
-            }
-        });
-
-        loadQuestion();
-
+      loadQuestion();
     });
+
+    document.getElementById("btn-back").addEventListener("click", async () => {
+      await fetch(`/quiz_sessions/${sessionId}/previous`, {
+        method:  "POST",
+        headers: { "X-CSRF-Token": csrf }
+      });
+      loadQuestion();
+    });
+
+    document.getElementById("btn-pause").addEventListener("click", () => {
+      if (confirm("本当に中断しますか？進行状況は保存されます。")) {
+        leaving = true;
+        window.location.href = "/quiz_sessions";
+      }
+    });
+
+    window.addEventListener("beforeunload", (e) => {
+      if (!leaving) {
+        e.preventDefault();
+        e.returnValue = "本当にこのページを離れますか？進行状況は保存されます。";
+      }
+    });
+
+    loadQuestion();
+  });
 </script>
-
-
-
-
-
-    
-
-            
-                
-
-

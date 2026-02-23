@@ -7,7 +7,7 @@ class Word < ApplicationRecord
 
     has_many :user_words, dependent: :destroy
     has_many :users, through: :user_words
-    has_many :user_answers
+    has_many :user_answers, dependent: :destroy
 
     has_many :synonyms, dependent: :destroy
 
@@ -16,6 +16,8 @@ class Word < ApplicationRecord
     validate :acceptable_image
 
     accepts_nested_attributes_for :synonyms, allow_destroy: true, reject_if: :all_blank
+    attr_accessor :remove_image
+    before_save :purge_image_if_requested
 
     def tag_names
       word_tags.pluck(:name)
@@ -26,12 +28,12 @@ class Word < ApplicationRecord
     end
 
 
+      def choices_for_quiz
+        distractors = Word.where.not(id: self.id).pluck(:reading).sample(2)
+        (distractors + [ self.reading ]).shuffle
+      end
 
 
-    def choices_for_quiz
-      distractors = Word.where.not(id: self.id).pluck(:reading).sample(2)
-      (distractors + [ self.reading ]).shuffle
-    end
 
     private
     def acceptable_image
@@ -44,5 +46,9 @@ class Word < ApplicationRecord
       unless acceptable_types.include?(image.content_type)
         errors.add(:image, "はJPEG、PNG、GIF形式にしてください。")
       end
+    end
+
+    def purge_image_if_requested
+      image.purge if remove_image == "1" && image.attached?
     end
 end

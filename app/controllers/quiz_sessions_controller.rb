@@ -45,7 +45,7 @@ class QuizSessionsController < ApplicationController
      japanese: word.japanese,
      reading: word.reading,
 
-     choices: word.choices_for_quiz,
+     choices: session.current_choices,
      saved_answer: existing&.selected_answer
    }
  end
@@ -62,7 +62,7 @@ class QuizSessionsController < ApplicationController
     session = current_user.quiz_sessions.find_by(id: params[:id])
     return redirect_to quiz_sessions_path, alert: "セッションが見つかりません" unless session
 
-    session.delete
+    session.destroy
     redirect_to quiz_sessions_path, notice: "セッションが削除されました。"
  end
 end

@@ -27,12 +27,21 @@
                                   placeholder: "dog" %>
         </div>
         <div class="form-group">
-          <%= f.label "search[word_tag_id]", "タグ"%>
-          <%= f.select "search[word_tag_id]",
-                              options_from_collection_for_select(
-                                  @word_tags, :id, :name, params.dig(:search, :word_tag_id)),
-                                { include_blank: "すべて" }, class: "form-control" %>
+          <%= f.label "search[word_tag_name]", "タグ"%>
+          <%= f.text_field "search[word_tag_name]",
+                    value: params.dig(:search, :word_tag_name),
+                    class: "form-control",
+                    placeholder: "動物" %>
         </div>
+
+          <div class="form-group">
+          <%= f.label "search[synonym]", "類義語"%>
+          <%= f.text_field "search[synonym]",
+                    value: params.dig(:search, :synonym),
+                    class: "form-control" %>
+        </div>
+
+
         <div class="search-actions">
           <%= f.submit "検索", class: "btn btn-primary" %>
           <% if params[:search].present? %>

@@ -2,11 +2,15 @@ puts "Starting seeds..."
 start_time = Time.current
 
 puts "Cleaning up existing data"
-QuizQuestion.delete_all
-Quiz.delete_all
-User.delete_all
-Word.delete_all
-WordTag.delete_all
+
+ApplicationRecord.descendants.each do |model|
+  next if model.abstract_class?
+  begin
+    model.delete_all
+  rescue
+  end
+end
+
 
 puts "Creating words.."
 start_time = Time.current

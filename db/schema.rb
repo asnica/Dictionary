@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_22_144422) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_164950) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,6 +51,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_22_144422) do
     t.datetime "recently_worked"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "choice_order", default: {}
     t.index ["user_id"], name: "index_quiz_sessions_on_user_id"
   end
 
