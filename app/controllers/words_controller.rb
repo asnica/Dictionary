@@ -30,6 +30,7 @@ class WordsController < ApplicationController
     end
   end
 
+
   def edit
     @word_tags = WordTag.for_user(current_user).order(:name)
 
@@ -78,26 +79,13 @@ class WordsController < ApplicationController
 
     if params[:search].present?
       search_params = params[:search]
-
-      if search_params[:japanese].present?
-        words = words.where("japanese LIKE ?", "%#{search_params[:japanese]}%")
-      end
-
-      if search_params[:english].present?
-        words = words.where("english LIKE ?", "%#{search_params[:english]}%")
-      end
-
-      if search_params[:word_tag_name].present?
-        words = words.joins(word_taggings: :word_tag).where("word_tags.name LIKE ?", "%#{search_params[:word_tag_name]}%")
-      end
-
-      if search_params[:synonym].present?
-        words = words.joins(:synonyms).where("synonyms.synonym_word LIKE ?", "%#{search_params[:synonym]}%")
-      end
-
+    words = words.where("japanese LIKE ?", "%#{search_params[:japanese]}%") if search_params[:japanese].present?
+    words = words.where("english LIKE ?", "%#{search_params[:english]}%") if search_params[:english].present?
+    words = words.joins(word_taggings: :word_tag).where("word_tags.name LIKE ?", "%#{search_params[:word_tag_name]}%") if search_params[:word_tag_name].present?
+    words = words.joins(:synonyms).where("synonyms.synonym_word LIKE ?", "%#{search_params[:synonym]}%") if search_params[:synonym].present?
     end
 
-    words
+    words.includes(user_words: :user, word_tags: [], synonyms: [], image_attachment: :blob)
   end
 
 

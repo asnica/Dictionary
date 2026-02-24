@@ -8,12 +8,20 @@ ja:
   activerecord:
     models:
       user: ユーザー
+      word: 単語
     attributes:
+      word:
+        japanese: 日本語
+        english: 英語
       user:
         name: 名前
         email: メールアドレス
         password: パスワード
         password_confirmation: パスワード確認
+
+      word_tag:
+        name: タグ名
+        description: 説明
 
     
     errors:

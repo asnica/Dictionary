@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <%= form_with model: @word_tag, local: true do |f| %>
+  <%= form_with model: @word_tag, local: true , data: { turbo: false } do |f| %>
     <% if @word_tag.errors.any? %>
       <div class="error-box">
         <h3><%= pluralize(@word_tag.errors.count, "エラー") %> 発生:</h3>
