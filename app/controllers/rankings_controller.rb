@@ -11,10 +11,12 @@ class RankingsController < ApplicationController
         "users.name",
         "AVG(quiz_sessions.score) as avg_score",
         "COUNT(quiz_sessions.id) as total_quizzes",
-        "AVG(quiz_sessions.score * 100.0 / #{QuizSession::QUESTION_COUNT}) as avg_accuracy"
+        "AVG(quiz_sessions.score * 100.0 / #{QuizSession::QUESTION_COUNT}) as avg_accuracy",
+        "RANK() OVER (ORDER BY AVG(quiz_sessions.score * 100.0 / #{QuizSession::QUESTION_COUNT}) DESC, COUNT(quiz_sessions.id) DESC) as rank"
       )
-      .order(Arel.sql("AVG(quiz_sessions.score * 100.0 / #{QuizSession::QUESTION_COUNT}) DESC, COUNT(quiz_sessions.id) DESC"))
+      .order(Arel.sql("rank ASC"))
       .page(params[:page]).per(20)
+
 
 
     completed = current_user.quiz_sessions.where(status: "completed")
