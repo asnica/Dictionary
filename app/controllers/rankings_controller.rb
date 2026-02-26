@@ -29,7 +29,7 @@ class RankingsController < ApplicationController
       .joins(:quiz_sessions)
       .where(quiz_sessions: { status: "completed" })
       .group("users.id")
-      .order(Arel.sql("AVG(quiz_sessions.score * 100.0 / #{QuizSession::QUESTION_COUNT}) DESC"))
+      .order(Arel.sql("AVG(quiz_sessions.score * 100.0 / #{QuizSession::QUESTION_COUNT}) DESC, count(quiz_sessions.id) DESC"))
       .pluck("users.id")
 
     @user_rank = user_ranks.index(current_user.id)&.+(1) || "Unranked"
