@@ -25,7 +25,7 @@ class QuizSession < ApplicationRecord
   end
 
   def self.start_new!(user)
-    word_ids = Word.pluck(:id).sample(QUESTION_COUNT)
+    word_ids = Word.active.pluck(:id).sample(QUESTION_COUNT)
 
     choices = word_ids.each_with_object({}) do |id, hash|
       word = Word.find(id)

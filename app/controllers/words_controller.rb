@@ -10,6 +10,7 @@ class WordsController < ApplicationController
   end
 
 
+
   def new
     @word ||= Word.new
     @word_tags = WordTag.for_user(current_user).order(:name)
@@ -17,7 +18,7 @@ class WordsController < ApplicationController
   end
 
   def create
-    @word = Word.new(word_params)
+    @word = Word.new(word_params_create)
 
     if @word.save
       UserWord.create(user_id: current_user.id, word_id: @word.id)
@@ -32,7 +33,7 @@ class WordsController < ApplicationController
 
 
   def edit
-    @word_tags = WordTag.for_user(current_user).order(:name)
+      @word_tags = WordTag.for_user(current_user).order(:name)
 
     if @word.synonyms.empty?
       3.times { @word.synonyms.build }
@@ -40,7 +41,7 @@ class WordsController < ApplicationController
   end
 
   def update
-    if @word.update(word_params)
+    if @word.update(word_params_update)
       flash[:notice]= "単語を更新しました。"
       redirect_to words_path
     else
@@ -49,6 +50,7 @@ class WordsController < ApplicationController
       render :edit, status: :unprocessable_entity
     end
   end
+
 
     def destroy
       @word.destroy
@@ -74,19 +76,41 @@ class WordsController < ApplicationController
     end
   private
 
-  def filter_words
-    words = Word.all
+ def filter_words
+  my_word     = UserWord.where(user_id: current_user.id).select(:word_id)
 
-    if params[:search].present?
-      search_params = params[:search]
+  words = Word.where(
+    Word.arel_table[:active].eq(true)
+        .or(Word.arel_table[:id].in(my_word.arel))
+  )
+
+  if params[:search].present?
+    search_params = params[:search]
+
     words = words.where("japanese LIKE ?", "%#{search_params[:japanese]}%") if search_params[:japanese].present?
     words = words.where("english LIKE ?", "%#{search_params[:english]}%") if search_params[:english].present?
-    words = words.joins(word_taggings: :word_tag).where("word_tags.name LIKE ?", "%#{search_params[:word_tag_name]}%") if search_params[:word_tag_name].present?
-    words = words.joins(:synonyms).where("synonyms.synonym_word LIKE ?", "%#{search_params[:synonym]}%") if search_params[:synonym].present?
+
+    if search_params[:word_tag_name].present?
+      words = words.joins(word_taggings: :word_tag)
+                   .where("word_tags.name LIKE ?", "%#{search_params[:word_tag_name]}%")
     end
 
-    words.includes(user_words: :user, word_tags: [], synonyms: [], image_attachment: :blob)
+    if search_params[:synonym].present?
+      words = words.joins(:synonyms)
+                   .where("synonyms.synonym_word LIKE ?", "%#{search_params[:synonym]}%")
+    end
+
+    if search_params[:created_by_me] == "1"
+      words = words.where(id: my_word)
+    end
   end
+
+  words.includes(user_words: :user, word_tags: [], synonyms: [], image_attachment: :blob)
+end
+
+
+
+
 
 
 
@@ -94,13 +118,24 @@ class WordsController < ApplicationController
     @word = Word.find(params[:id])
   end
 
-  def word_params
+  def word_params_create
     params.require(:word).permit(
       :japanese,
       :reading,
       :english,
       :image,
       :remove_image,
+      word_tag_ids: [],
+    synonyms_attributes: [ :id, :synonym_word, :_destroy ]
+    )
+  end
+
+   def word_params_update
+    params.require(:word).permit(
+
+      :image,
+      :remove_image,
+      :active,
       word_tag_ids: [],
     synonyms_attributes: [ :id, :synonym_word, :_destroy ]
     )

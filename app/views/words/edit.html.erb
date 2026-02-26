@@ -22,13 +22,13 @@
       
       <div class="form-row">
         <div class="form-group">
-          <%= f.label :japanese, "単語 *" %>
-          <%= f.text_field :japanese, class: "form-control" %>
+          <%= f.label :japanese, "単語 *"%>
+          <%= f.text_field :japanese, class: "form-control", disabled: true %>
         </div>
         
         <div class="form-group">
           <%= f.label :reading, "読み" %>
-          <%= f.text_field :reading, class: "form-control" %>
+          <%= f.text_field :reading, class: "form-control", disabled:true %>
         </div>
       </div>
       
@@ -73,6 +73,9 @@
           </div>
         <% end %>
       </div>
+      <% if @word_tags.empty? %>
+        <p>タグが登録されていません。<%= link_to "タグ管理へ", new_word_tag_path, class: "btn btn-link" %></p>
+      <%end%>
     </div>
     
     <!-- 類義語 -->
@@ -95,8 +98,19 @@
       <button type="button" id="add-synonym" class="btn btn-secondary btn-sm">
         + 類義語を追加
       </button>
+
+      <div class = "form-group">
+        <h2>単語の状態</h2>
+        <%= f.label :active, "単語の状態" %>
+        <%= f.select :active, [["有効", true], ["無効", false]], {}, class: "form-control" %>
+        <small class="form-text">無効にすると他のユーザーに表示されなくなります。</small>
+      </div>
+
+
     </div>
-    
+
+ 
+     
     <!-- 送信ボタン -->
     <div class="form-actions">
       <%= f.submit "更新", class: "btn btn-primary btn-large" %>

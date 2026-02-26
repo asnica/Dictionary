@@ -19,6 +19,8 @@ class Word < ApplicationRecord
     attr_accessor :remove_image
     before_save :purge_image_if_requested
 
+    scope :active, -> { where(active: true) }
+
     def tag_names
       word_tags.pluck(:name)
     end
@@ -28,10 +30,11 @@ class Word < ApplicationRecord
     end
 
 
-      def choices_for_quiz
-        distractors = Word.where.not(id: self.id).pluck(:reading).sample(2)
-        (distractors + [ self.reading ]).shuffle
-      end
+    def choices_for_quiz
+      distractors = Word.active.where.not(id: self.id).pluck(:reading).sample(2)
+      (distractors + [ self.reading ]).shuffle
+    end
+
 
 
 

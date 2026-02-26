@@ -53,7 +53,7 @@
         <%end%>
       </div>
       <% if @word_tags.empty? %>
-        <p class="text-muted">タグがありません。先にタグを作成してください。</p>
+        <p>タグが登録されていません。<%= link_to "タグ管理へ", new_word_tag_path, class: "btn btn-link" %></p>
       <%end%>
     </div>
     <div class="form-section">

@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   post "/login", to: "sessions#create"
   delete "/logout", to: "sessions#destroy"
 
-  get "/word_tags/new", to: "word_tags#new"
 
 
   resources :word_tags
@@ -21,6 +20,10 @@ Rails.application.routes.draw do
   resources :words do
     collection do
       get :export_csv
+    end
+    member do
+      patch :deactivate
+      patch :activate
     end
   end
 

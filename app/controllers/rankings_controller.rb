@@ -21,7 +21,8 @@ class RankingsController < ApplicationController
 
     completed = current_user.quiz_sessions.where(status: "completed")
     @user_quiz_count = completed.count
-    @user_avg_score = completed.average(:score)&.round(2) || 0
+    @user_avg_score = (completed.average(:score).to_f * 100.0 / QuizSession::QUESTION_COUNT) || 0
+
 
 
     user_ranks = User
