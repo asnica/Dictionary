@@ -41,7 +41,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_071441) do
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
-
+  
   create_table "quiz_sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "word_order", default: [], array: true

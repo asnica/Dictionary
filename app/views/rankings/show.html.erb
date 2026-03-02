@@ -1,46 +1,49 @@
 <div class="container">
   <div class="page-header">
-    <h1>単語クイズランキング</h1>
+    <h1>問題集ランキング</h1>
   </div>
+  
+
+  <% if @session.present? %>
+  <div class="ranking-info">
+    <p>お疲れ様でした!</p>
+    <p>
+      10問中
+      <%= @session.score %>問正解・
+      正答率 : <%= (@session.score * 100.0 / @session.word_order.size).round(1) %>%
+    </p>
+    <p>全体の順位としては <%= @user_rank %> 番目</p>
+  </div>
+    <% end %>
+
+
+  <% if @rankings.any? %>
+    <div class="ranking-table">
+      <table>
+        <thead>
+          <tr>
+            <th class="rank-column">順位</th>
+            <th class="name-column">ユーザー</th>
+            <th class="score-column">最高正解率</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @rankings.each do |ranking| %>
+            <tr class="<%= 'current-user-row' if ranking.id == current_user.id %>">
+              <td class="rank-column"><%= ranking.rank %></td>
+              <td class="name-column"><%= ranking.name %></td>
+              <td class="score-column"><%= ranking.best_accuracy.to_f.round(1) %>%</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= paginate @rankings %>
+  <% else %>
+    <p>ランキングデータがありません。</p>
+  <% end %>
+  <div class = "footer">
   <%= link_to "メニューへ戻る", root_path, class: "btn btn-secondary" %>
   <%= link_to "クイズメニューへ戻る", quiz_sessions_path, class: "btn btn-primary" %>
-
-
-<div class="ranking-info">
-  <% if @user_rank != "Unranked" %>
-    <p>お疲れ様でした!</p>
-    <p>あなたの成績は、<%= @user_quiz_count%> 問中 <%= @user_avg_score %>%正解率です。</p>
-    <p>現在のランキングは <%= @user_rank %> 位です。</p>
-  <% else %>
-    <p>あなたの成績は、まだランキングに反映されていません。</p>
-  <% end %>
+  </div>
 </div>
-
-<% if @rankings.any? %>
-  <div class="ranking-table">
-    <table>
-      <thead>
-        <tr>
-          <th class="rank-column">順位</th>
-          <th class="name-column">ユーザー</th>
-          <th class="score-column">平均正解率</th>
-          <th class="count-column">回数</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @rankings.each_with_index do |ranking, index| %>
-          <tr class="<%= 'current-user-row' if ranking.id == current_user.id %>">
-            <td class="rank-column"><%= ranking.rank%></td>
-            <td class="name-column"><%= ranking.name %></td>
-            <td class="score-column"><%= ranking.avg_accuracy.to_f.round(2) %>%</td>
-            <td class="count-column"><%= ranking.total_quizzes %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  </div>
-  <%= paginate @rankings %>
-<% else %>
-  <p>ランキングデータがありません。</p>
-<% end %>

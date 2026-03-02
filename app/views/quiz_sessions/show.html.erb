@@ -41,6 +41,7 @@
   </div>
 
   <div class="result-actions">
+    <%= link_to "ランキングはこちら", ranking_path(session_id: @session.id), class: "btn btn-primary" %>
     <%= button_to "もう一度", retry_quiz_session_path(@session), method: :post, class: "btn btn-primary" %>
     <%= link_to "一覧へ", quiz_sessions_path, class: "btn btn-secondary" %>
   </div>

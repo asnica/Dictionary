@@ -57,4 +57,7 @@ Rails.application.routes.draw do
 
 
   resource :ranking, only: [ :show ], controller: "rankings"
+
+  get "/service-worker.js" => "rails/pwa#service_worker", as: :pwa_service_worker
+  get "/manifest.json" => "rails/pwa#manifest", as: :pwa_manifest
 end
