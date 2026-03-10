@@ -6,6 +6,7 @@ Rails.application.configure do
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
 
+
   config.web_console.permissions = "14.44.120.104"
 
   # Do not eager load code on boot.
@@ -13,6 +14,8 @@ Rails.application.configure do
 
   # Show full error reports.
   config.consider_all_requests_local = true
+
+  
 
   # Enable server timing.
   config.server_timing = true

@@ -2,6 +2,7 @@ class CreateInitialSchema < ActiveRecord::Migration[8.0]
   def change
     # PostgreSQL Extensions
     enable_extension "pg_catalog.plpgsql"
+    
 
     create_table "active_storage_blobs", force: :cascade do |t|
       t.string "key", null: false
