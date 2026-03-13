@@ -77,7 +77,7 @@
         <tbody>
           <% @words.each do |word|%>
             <tr class= "<%='inactive-word' unless word.active%>">
-              <td><%= word.user_words.first&.user&.name || "不明" %></td>
+              <td><%= word.creator_name %></td>
               <td class="text-center">
                 <% if word.image.attached? %>
                   <%= image_tag word.image.variant(resize_to_limit: [50,50]), class: "word-thumbnail" %>

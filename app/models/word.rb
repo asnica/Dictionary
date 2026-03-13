@@ -29,6 +29,14 @@ class Word < ApplicationRecord
        word_tags.exists?(name: tag_name)
     end
 
+    def creator_name
+      users.first&.name || "不明"
+    end
+
+
+
+
+
 
     def choices_for_quiz
       distractors = Word.active.where.not(id: self.id).pluck(:reading).sample(2)

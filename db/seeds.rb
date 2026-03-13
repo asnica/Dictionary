@@ -39,6 +39,38 @@ word_ids   = Word.pluck(:id)
 words_hash = Word.all.index_by(&:id)
 puts "Created #{Word.count} words"
 
+puts "Creating word tags..."
+word_tags_data = [
+  { name: "動物", description: "動物に関する単語", color: "#FF5722" },
+  { name: "食べ物", description: "食べ物に関する単語", color: "#4CAF50" },
+  { name: "自然", description: "自然に関する単語", color: "#2196F3" },
+  { name: "学校", description: "学校に関する単語", color: "#9C27B0" },
+  { name: "人", description: "人に関する単語", color: "#FFC107" }
+
+]
+Wordtag.insert_all(word_tags_data)
+
+puts "Created #{WordTag.count} word tags"
+
+puts "Associating words with tags..."
+WordTag.find_each do |tag|
+  case tag.name
+  when "動物"
+    tag.words << Word.where(japanese: [ "猫", "犬", "鳥", "魚" ])
+  when "食べ物"
+    tag.words << Word.where(japanese: [ "食べ物", "飲み物", "水" ])
+  when "自然"
+    tag.words << Word.where(japanese: [ "火", "風", "山", "川", "海", "空", "雨", "雪", "花", "木", "草" ])
+  when "学校"
+    tag.words << Word.where(japanese: [ "学校", "先生", "学生" ])
+  when "人"
+    tag.words << Word.where(japanese: [ "友達" ])
+  end
+end
+
+
+
+
 
 puts "Creating 10,000 users..."
 start           = Time.current
