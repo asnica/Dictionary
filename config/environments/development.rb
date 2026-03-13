@@ -15,7 +15,7 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
-  
+
 
   # Enable server timing.
   config.server_timing = true
@@ -39,22 +39,7 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
-<<<<<<< HEAD
   config.action_mailer.delivery_method = :letter_opener
-=======
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    port: 587,
-    domain: "gmail.com",
-    user_name: ENV["GMAIL_USERNAME"],
-    password: ENV["GMAIL_PASSWORD"],
-    authentication: "plain",
-    enable_starttls_auto: true,
-    openssl_verify_mode: OpenSSL::SSL::VERIFY_NONE
-}
-
->>>>>>> main
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
   config.action_mailer.perform_deliveries = true
 
