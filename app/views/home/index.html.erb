@@ -1,33 +1,34 @@
 <div class="container">
   <h1>メニュー</h1>
+  <div class="recommendation-card">
+    <div class="recommendation-card__badge">✨ 今日のおすすめ</div>
+    <h2 class="recommendation-card__title">今日のおすすめ単語</h2>
+    <div class="recommendation-card__word"><%= @recommended_words[:word] %></div>
+    <div class="recommendation-card__details">
+      <p><span class="recommendation-card__label">読み方</span><span class="recommendation-card__value"><%= @recommended_words[:reading] %></span></p>
+      <p><span class="recommendation-card__label">意味</span><span class="recommendation-card__value"><%= @recommended_words[:meaning] %></span></p>
+    </div>
+  </div> 
   
   <div class="menu-list">
     <%= link_to word_tags_path, class: "menu-item" do %>
       <h2>タグ管理</h2>
       <p>タグの新規登録、検索、修正、削除</p>
     <% end %>
-    
-    <div class="menu-list">
-      <%= link_to words_path, class: "menu-item" do %>
+
+    <%= link_to words_path, class: "menu-item" do %>
       <h2>単語管理</h2>
       <p>単語の登録、検索、CSV出力</p>
     <% end %>
-    </div>
-    
-     <div class="menu-list">
-      <%= link_to quiz_sessions_path, class: "menu-item" do %>
+
+    <%= link_to quiz_sessions_path, class: "menu-item" do %>
       <h2>問題集</h2>
       <p>クイズ機能</p>
     <% end %>
 
-
-
-
-    <div class="menu-list">
-      <%= link_to ranking_path, class: "menu-item" do %>
-      <h2> ランキング</h2>
+    <%= link_to ranking_path, class: "menu-item" do %>
+      <h2>ランキング</h2>
       <p>ユーザーのクイズスコアランキング</p>
     <% end %>
-    </div>
   </div>
 </div>

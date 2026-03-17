@@ -72,6 +72,7 @@
             <th>タグ</th>
             <th>類義語</th>
             <th>操作</th>
+           
           </tr>
         </thead>
         <tbody>
@@ -85,7 +86,7 @@
                   <span class="no-image">-</span>
                 <% end %>
               </td>
-              <td class="word-japanese"><%= word.japanese %></td>
+              <td class="word-japanese" onclick = "speakJapanese('<%=word.japanese%>')" style = "cursor:pointer; color: #007bff;" title= "クリックして発音を聞く"><%= word.japanese %> 🔊</td>
               <td><%= word.reading %></td>
               <td><%= word.english %></td>
               <td>
@@ -138,3 +139,16 @@
     </p>
   <% end %>
 </div>
+
+
+<script>
+function speakJapanese(text) {
+  window.speechSynthesis.cancel();
+  
+  const uttr = new SpeechSynthesisUtterance(text);
+  uttr.lang = 'ja-JP'; 
+  uttr.rate = 0.9;    
+  
+  window.speechSynthesis.speak(uttr);
+}
+</script>
