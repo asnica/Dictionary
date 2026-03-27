@@ -52,7 +52,7 @@ gem "image_processing", "~> 1.2"
 
 
 
-gem "dotenv-rails", groups: [ :development, :test ]
+gem "dotenv-rails", groups: [ :development, :test, :production ]
 
 
 group :development, :test do
@@ -87,3 +87,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "unicorn"
+gem "rack", "~> 2.2.10"
+

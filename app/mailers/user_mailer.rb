@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-  self.delivery_method = :letter_opener
+  
   def welcome_email(user)
     @user = user
     mail(
