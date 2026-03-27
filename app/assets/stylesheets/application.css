@@ -4,6 +4,8 @@
   box-sizing: border-box;
 }
 
+
+
 .footer {
   margin-top: 30px;
   text-align: center;
@@ -128,18 +130,28 @@ body {
 }
 
 .user-name {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+
+
+
+
+}
+.uesr-credits {
   color: white;
   font-weight: 500;
+  font-size: 0.9rem;
 }
-
 .btn-logout {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
-  border: 1px solid white;
   padding: 6px 16px;
   border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  
 }
 
 .btn-logout:hover {
@@ -646,6 +658,13 @@ small.form-text {
   margin-top : 10px;
   margin-bottom: 15px;
   color: #333;
+}
+
+
+.form-section p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
 }
 .form-row {
   display: grid;
@@ -1698,4 +1717,3 @@ small.form-text {
     display: block;
   }
 
-  

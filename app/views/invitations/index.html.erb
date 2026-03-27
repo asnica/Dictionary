@@ -1,0 +1,64 @@
+<%# app/views/invitations/index.html.erb %>
+<div class="container">
+  <div class="page-header">
+    <h1>友達を招待する</h1>
+  </div>
+
+  <div class="form-section">
+    <h2>招待メールを送る</h2>
+    <p>友達が登録すると、あなたに画像生成クレジットが
+       <strong><%= Invitation::REWARD_CREDITS %>回分</strong>プレゼントされます！</p>
+
+    <%= form_with model: @invitation, url: invitations_path do |f| %>
+      <% if @invitation.errors.any? %>
+        <div class="error-box">
+          <ul>
+            <% @invitation.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <%= f.email_field :email, class: "form-control",
+              placeholder: "friend@example.com" %>
+        </div>
+        <%= f.submit "招待する", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="form-section">
+    <h2>招待履歴</h2>
+    <% if @invitations.any? %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>メールアドレス</th>
+            <th>送信日</th>
+            <th>ステータス</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @invitations.each do |inv| %>
+            <tr>
+              <td><%= inv.email %></td>
+              <td><%= l inv.created_at, format:"%Y-%m-%d %H:%M" %></td>
+              <td>
+                <% if inv.accepted? %>
+                  <p>登録済み（+<%= Invitation::REWARD_CREDITS %>クレジット）</p>
+                <% else %>
+                  <p">未登録</p>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>まだ招待を送っていません。</p>
+    <% end %>
+  </div>
+</div>

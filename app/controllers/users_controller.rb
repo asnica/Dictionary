@@ -1,6 +1,10 @@
 class UsersController < ApplicationController
   def new
     @user = User.new
+
+    if params[:token].present?
+      session[:invitation_token] = params[:token]
+    end
   end
 
   def create
@@ -23,5 +27,16 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
+  end
+
+   def accept_invitation(user)
+    token = session.delete(:invitation_token)
+    return unless token
+
+    invitation = Invitation.find_by(token: token)
+    return unless invitation
+    return if invitation.accepted?
+
+    invitation.accept!(user)
   end
 end

@@ -11,6 +11,9 @@ class User < ApplicationRecord
 
 
     has_many :word_tags, dependent: :destroy
+
+    has_many :invitations, foreign_key: :inviter_id, dependent: :destroy
+
     before_save :downcase_email
 
 
@@ -32,6 +35,10 @@ class User < ApplicationRecord
     def consume_credit!
       raise "クレジット不足" unless can_generate_image?
       decrement!(:image_credits)
+    end
+
+    def accepted_invitation_count
+      invitations.accepted.count
     end
 
     private
