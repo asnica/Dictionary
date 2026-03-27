@@ -16,10 +16,17 @@ class Word < ApplicationRecord
     validate :acceptable_image
 
     accepts_nested_attributes_for :synonyms, allow_destroy: true, reject_if: :all_blank
-    attr_accessor :remove_image
-    before_save :purge_image_if_requested
+
 
     scope :active, -> { where(active: true) }
+
+
+
+    attr_accessor :ai_image_url, :remove_image
+    before_validation :attach_image_from_url, if: -> { ai_image_url.present? }
+    before_validation :purge_image, if: -> { ActiveModel::Type::Boolean.new.cast(remove_image) }
+
+
 
     def tag_names
       word_tags.pluck(:name)
@@ -59,7 +66,28 @@ class Word < ApplicationRecord
       end
     end
 
-    def purge_image_if_requested
-      image.purge if remove_image == "1" && image.attached?
+   def attach_image_from_url
+    return if ai_image_url.blank?
+    return if image.attached?
+
+    resp = Faraday.get(ai_image_url)
+    unless resp.success?
+      errors.add(:base, "画像のダウンロードに失敗しました。")
+      return
     end
+
+    image.attach(
+      io: StringIO.new(resp.body),
+      filename: "ai_#{Time.current.strftime("%Y%m%d%H%M%S")}.jpg",
+      content_type: "image/jpeg"
+    )
+
+  rescue StandardError => e
+    Rails.logger.error("[Word#attach_image_from_url]#{e.class}:#{e.message}")
+    errors.add(:base, "画像の添付に失敗しました。")
+  end
+
+  def purge_image
+    image.purge if image.attached?
+  end
 end

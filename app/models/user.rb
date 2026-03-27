@@ -16,9 +16,7 @@ class User < ApplicationRecord
 
 
 
-    def current_quiz
-      quizzes.find_by(status: "in_progress")
-    end
+
 
 
 
@@ -26,14 +24,14 @@ class User < ApplicationRecord
       current_quiz.present?
     end
 
-    def completed_quizzes
-      quizzes.completed.order(completed_at: :desc)
+
+    def can_generate_image?
+      image_credits > 0
     end
 
-    def average_score
-       completed = quizzes.completed
-       return 0 if completed.empty?
-       completed.average(:score).to_f.round(2)
+    def consume_credit!
+      raise "クレジット不足" unless can_generate_image?
+      decrement!(:image_credits)
     end
 
     private

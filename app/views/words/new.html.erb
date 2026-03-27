@@ -31,13 +31,101 @@
         <%= f.text_field :english, class: "form-control", placeholder: "dog" %>
       </div>
     </div>
-    <div class="form-section">
-      <h2>画像</h2>
-      <div class = "form-group">
-        <%= f.file_field :image, accept: "image/*" , class: "form-control" %>
-        <small class= "form-text">JPEG,PNG,GIF形式(最大5MB)</small>
+    
+    
+    
+<div class="form-section">
+  <h2>画像</h2>
+
+  <div class="form-group">
+    <%= f.file_field :image, accept: "image/*", class: "form-control" %>
+    <small class="form-text">JPEG,PNG,GIF形式(最大5MB)</small>
+
+
+
+
+
+    
+  </div>
+  <div style = "display:grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+  
+  <div style = "border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; background-color:#f9f9f9; flex-direction: column; justify-content: center; align-items: center; min-height: 250px;">
+    <h4 style = "margin-top: 0; color: #333;">AI画面生成</h4>
+    <p style = "color: #666; text-align: center; font-size: 14px; margin-bottom: 15px;">プロインプと入力して<br>画面を自動生成</p>
+  
+  <% if current_user.can_generate_image? %>
+         <button type="button" id="open-ai-modal" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px; display: block; margin: 0 auto;">
+         生成する
+        </button>
+        <small style = "color: #999; margin-top: 10px;">
+        残りクレジット: <span id="credits-count"><%= current_user.image_credits %></span>
+        </small>
+
+  <% else %>
+     <button type="button" id="open-ai-modal" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px; display: block; margin: 0 auto;" disabled="disabled" color: #999;>
+         クレジット不足
+      </button>
+  <% end %>
+  </div>
+  
+  <div id="confirmed-preview" style= "border:2px solid #e0e0e0; border-radius: 8px; padding: 20px; background-color:#f9f9f9; display:none; flex-direction: column; justify-content: center; align-items: center; min-height: 250px;">
+    <h4 style = "margin-top: 0; color: #333;">選択済み画像</h4>
+    <img id="confirmed-img" src="" alt="選択済み画像" style="max-width: 100%; max-height: 150px; object-fit: contain; margin: 15px 0; border-radius: 4px;">
+    <button type="button" id="remove-confirmed" class="btn btn-secondary btn-sm">
+      🗑️ 削除
+    </button>
+    
+  </div>
+
+  <%# hidden field %>
+  <%= f.hidden_field :ai_image_url, id: "ai-image-url-field" %>
+</div>
+
+
+<div id="ai-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>AI画像生成</h3>
+      <button type="button" id="close-modal" class="modal-close">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <%# プロンプト入力 %>
+      <div class="form-group">
+        <label>プロンプト</label>
+        <input type="text"
+               id="ai-prompt"
+               class="form-control"
+               placeholder="例：かわいい犬のイラスト">
+      </div>
+
+      <button type="button" id="generate-btn" class="btn btn-primary">
+        生成する
+      </button>
+
+      <div id="ai-loading" style="display: none;">
+        <p>画像を生成中です...</p>
+      </div>
+
+      <div id="ai-preview" style="display: none;">
+        <img id="ai-preview-img" src="" alt="AI生成画像" style="max-width: 100%;">
+        <div class="ai-preview-actions">
+          <button type="button" id="accept-btn" class="btn btn-primary">
+            この画像を使う
+          </button>
+          <button type="button" id="regenerate-btn" class="btn btn-secondary">
+            再生成（クレジット1消費）
+          </button>
+        </div>
       </div>
     </div>
+  </div>
+</div>
+
+
+
+
+
     <div class="form-section">
       <h2>タグ(複数選択可)</h2>
       <div class = "tag-checkboxes">
@@ -81,6 +169,7 @@
       const addSynonymBtn = document.getElementById('add-synonym')
       const synonymsContainer = document.getElementById('synonyms-fields')
 
+
       if(addSynonymBtn && synonymsContainer){
         addSynonymBtn.addEventListener('click', function(){
           const time = new Date().getTime();
@@ -91,5 +180,106 @@
           synonymsContainer.appendChild(newField);
         });
       }
-    });
+    const modal         = document.getElementById("ai-modal");
+  const openBtn       = document.getElementById("open-ai-modal");
+  const closeBtn      = document.getElementById("close-modal");
+  const generateBtn   = document.getElementById("generate-btn");
+  const regenerateBtn = document.getElementById("regenerate-btn");
+  const acceptBtn     = document.getElementById("accept-btn");
+  const promptInput   = document.getElementById("ai-prompt");
+  const preview       = document.getElementById("ai-preview");
+  const previewImg    = document.getElementById("ai-preview-img");
+  const hiddenField   = document.getElementById("ai-image-url-field");
+  const loading       = document.getElementById("ai-loading");
+  const creditsCount  = document.getElementById("credits-count");
+  const confirmedArea = document.getElementById("confirmed-preview");
+  const confirmedImg  = document.getElementById("confirmed-img");
+  const removeBtn     = document.getElementById("remove-confirmed");
+
+  // モーダル要素がなければスキップ（クレジット0でボタンがない場合）
+  if (!openBtn || !modal) return;
+
+  // ── モーダル開閉 ──
+  openBtn.addEventListener("click", function () {
+    modal.style.display   = "flex";
+    preview.style.display = "none";
+    loading.style.display = "none";
+  });
+
+  closeBtn.addEventListener("click", function () {
+    modal.style.display = "none";
+  });
+
+  modal.addEventListener("click", function (e) {
+    if (e.target === modal) modal.style.display = "none";
+  });
+
+  async function generateImage() {
+    const prompt = promptInput.value.trim();
+    if (!prompt) {
+      alert("プロンプトを入力してください");
+      return;
+    }
+
+    generateBtn.disabled   = true;
+    regenerateBtn.disabled = true;
+    loading.style.display  = "block";
+    preview.style.display  = "none";
+
+    try {
+      const resp = await fetch("/words/generate_image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ prompt: prompt })
+      });
+
+      const data = await resp.json();
+
+      if (data.success) {
+        previewImg.src             = data.image_url;
+        previewImg.dataset.tempUrl = data.image_url;
+        preview.style.display      = "block";
+        creditsCount.textContent   = data.credits_remaining;
+
+        if (data.credits_remaining <= 0) {
+          regenerateBtn.disabled  = true;
+          regenerateBtn.textContent = "再生成（クレジットなし）";
+        }
+      } else {
+        alert(data.error || "画像生成に失敗しました");
+      }
+    } catch (e) {
+      alert("通信エラーが発生しました");
+    } finally {
+      generateBtn.disabled  = false;
+      loading.style.display = "none";
+      if (creditsCount.textContent !== "0") {
+        regenerateBtn.disabled = false;
+      }
+    }
+  }
+
+  generateBtn.addEventListener("click", generateImage);
+  regenerateBtn.addEventListener("click", generateImage);
+
+
+acceptBtn.addEventListener("click", function () {
+    const url = previewImg.dataset.tempUrl;
+    if (!url) return;
+
+    hiddenField.value           = url;
+    confirmedImg.src            = url;
+    confirmedArea.classList.add("active")
+    modal.style.display         = "none";
+  });
+
+  removeBtn.addEventListener("click", function () {
+    hiddenField.value           = "";
+    confirmedImg.src            = "";
+    confirmedArea.classList.remove("active")
+  });
+});
   </script>

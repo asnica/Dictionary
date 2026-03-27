@@ -52,11 +52,18 @@ class WordsController < ApplicationController
   end
 
 
+
+
+
     def destroy
       @word.destroy
       flash[:notice] = "単語を削除しました。"
       redirect_to words_path
     end
+
+
+
+
 
     def export_csv
       @words = filter_words.distinct.order(:japanese)
@@ -74,6 +81,30 @@ class WordsController < ApplicationController
         type: "text/csv; charset=shift_jis",
         disposition: "attachment"
     end
+
+     def generate_image
+      result = ImageGenerationService.new(
+        user: current_user,
+        prompt: params[:prompt]).call
+
+      if result.success?
+        render json: {
+          success: true,
+          image_url: result.image_url,
+          credits_remaining: current_user.reload.image_credits
+        }
+      else
+        p "API Error: #{result.error}"
+        render json: {
+          success: false,
+          error: result.error
+        }, status: :unprocessable_entity
+      end
+    end
+
+
+
+
   private
 
  def filter_words
@@ -112,39 +143,42 @@ end
 
 
 
-
-
-  def set_word
-    @word = Word.find(params[:id])
-  end
-
-  def word_params_create
-    params.require(:word).permit(
-      :japanese,
-      :reading,
-      :english,
-      :image,
-      :remove_image,
-      word_tag_ids: [],
-    synonyms_attributes: [ :id, :synonym_word, :_destroy ]
-    )
-  end
-
-   def word_params_update
-    params.require(:word).permit(
-
-      :image,
-      :remove_image,
-      :active,
-      word_tag_ids: [],
-    synonyms_attributes: [ :id, :synonym_word, :_destroy ]
-    )
-  end
-
-  def authorize_word_edit
-    unless UserWord.exists?(user_id: current_user.id, word_id: params[:id])
-    flash[:alert] = "この単語を編集する権限がありません。"
-    redirect_to words_path
+    def set_word
+      @word = Word.find(params[:id])
     end
-  end
+
+    def word_params_create
+      params.require(:word).permit(
+        :japanese,
+        :reading,
+        :english,
+        :image,
+        :remove_image,
+                :ai_image_url,
+
+        word_tag_ids: [],
+      synonyms_attributes: [ :id, :synonym_word, :_destroy ],
+
+      )
+    end
+
+    def word_params_update
+      params.require(:word).permit(
+
+        :image,
+        :remove_image,
+        :active,
+                :ai_image_url,
+
+        word_tag_ids: [],
+      synonyms_attributes: [ :id, :synonym_word, :_destroy ],
+      )
+    end
+
+    def authorize_word_edit
+      unless UserWord.exists?(user_id: current_user.id, word_id: params[:id])
+      flash[:alert] = "この単語を編集する権限がありません。"
+      redirect_to words_path
+      end
+    end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_26_071441) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_24_050203) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -41,7 +41,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_071441) do
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
-  
+
   create_table "quiz_sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "word_order", default: [], array: true
@@ -89,7 +89,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_071441) do
     t.datetime "updated_at", null: false
     t.datetime "confirmed_at"
     t.string "confirmation_token"
+    t.integer "image_credits", default: 3, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.check_constraint "image_credits >= 0", name: "image_credits_non_negative"
   end
 
   create_table "word_taggings", force: :cascade do |t|

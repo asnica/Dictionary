@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get "news/index"
+  get "news/article"
+  get "news/highlight"
   get "up" => "rails/health#show", as: :rails_health_check
 
   root "home#index"
@@ -21,30 +24,13 @@ Rails.application.routes.draw do
   resources :words do
     collection do
       get :export_csv
+      post :generate_image
     end
     member do
       patch :deactivate
       patch :activate
     end
   end
-
-  # resources :quizzes do
-  #   collection do
-  #     get :past_quizzes
-  #   end
-
-
-  #   member do
-  #     post :submit_answer
-  #     patch :next_question
-  #     patch :previous_question
-  #     post :grade
-  #     get :result
-  #     post :restart
-  #     post :pause
-  #   end
-  # end
-  #
 
   resources :quiz_sessions, only: [ :index, :create, :show, :destroy ] do
     member do
@@ -58,7 +44,4 @@ Rails.application.routes.draw do
 
 
   resource :ranking, only: [ :show ], controller: "rankings"
-
-  get "/service-worker.js" => "rails/pwa#service_worker", as: :pwa_service_worker
-  get "/manifest.json" => "rails/pwa#manifest", as: :pwa_manifest
 end
