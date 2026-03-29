@@ -1717,3 +1717,105 @@ small.form-text {
     display: block;
   }
 
+/* app/assets/stylesheets/reader.css */
+
+.reader-textarea {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.reader-content {
+  font-size: 18px;
+  line-height: 2.0;
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* ── ハイライト ── */
+.matched-word {
+  background-color: #fff3cd;
+  border-bottom: 2px solid #ffc107;
+  cursor: pointer;
+  padding: 0 2px;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+
+.matched-word:hover {
+  background-color: #ffe69c;
+}
+
+/* ── ツールチップ ── */
+.word-tooltip {
+  position: fixed;
+  background: #333;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  max-width: 280px;
+  z-index: 2000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.tooltip-japanese {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.tooltip-reading {
+  font-size: 13px;
+  color: #ccc;
+  margin-bottom: 4px;
+}
+
+.tooltip-english {
+  font-size: 15px;
+  color: #90caf9;
+}
+
+.tooltip-image {
+  margin-top: 8px;
+  max-width: 100%;
+  max-height: 120px;
+  border-radius: 4px;
+}
+.matched-word {
+  background: rgba(10, 132, 255, 0.25);
+  border-radius: 3px;
+  padding: 0 2px;
+  cursor: help;
+  position: relative;
+}
+
+.matched-word:hover {
+  background: rgba(10, 132, 255, 0.5);
+}
+
+.matched-word::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background: #111;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2000;
+}
+
+.matched-word:hover::after {
+  opacity: 1;
+}

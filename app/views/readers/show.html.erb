@@ -1,0 +1,41 @@
+<%# app/views/readers/show.html.erb %>
+<div class="container">
+  <div class="page-header">
+    <h1>リーディング</h1>
+    <%= link_to "← 一覧に戻る", words_path, class: "btn btn-secondary" %>
+  </div>
+
+  <%# ── 入力フォーム ── %>
+  <div class="form-section">
+    <h2>テキストを入力</h2>
+    <%= form_with url: reader_path, method: :post, local: true, html: { multipart: true }, data: {turbo:false} do |f| %>
+      <div class="form-group">
+        <label>テキストを貼り付け</label>
+        <textarea name="text" class="form-control reader-textarea"
+                  rows="8" placeholder="ここに文章を貼り付けてください..."><%= params[:text] %></textarea>
+      </div>
+      <div class="form-group">
+        <label>またはファイルをアップロード</label>
+        <input type="file" name="file" accept=".txt" class="form-control">
+        <small class="form-text">テキストファイル(.txt)のみ</small>
+      </div>
+      <button type="submit" class="btn btn-primary">解析する</button>
+    <% end %>
+  </div>
+
+  <%# ── 解析結果 ── %>
+  <% if @annotated.present? %>
+    <div class="form-section">
+      <h2>
+        解析結果
+        <small>（<%= @match_count %>語が見つかりました）</small>
+      </h2>
+      <p class="form-text">ハイライトされた単語にマウスを乗せると意味が表示されます。</p>
+
+      <div class="reader-content">
+        <%= @annotated.html_safe %>
+      </div>
+    </div>
+  <% end %>
+</div>
+

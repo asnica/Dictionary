@@ -46,4 +46,5 @@ Rails.application.routes.draw do
   resource :ranking, only: [ :show ], controller: "rankings"
 
   resources :invitations, only: [ :index, :create ]
+  resource :reader, only: [ :show, :create ]
 end
