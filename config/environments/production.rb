@@ -71,7 +71,11 @@ Rails.application.configure do
     user_name:ENV['MAILGUN_USER'], 
     password:ENV['MAILGUN_PASSWORD'],
     authentication: "plain",
-    enable_starttls_auto: true }
+    enable_starttls_auto: true,
+    openssl_verify_mode:"none"
+ 
+ 
+  }
 
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.

@@ -5,6 +5,7 @@ class WordsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:generate_image]
 
   def index
+    @word_tags = WordTag.all
     @words = filter_words.distinct.order(:japanese).page(params[:page]).per(10)
   end
   def show
@@ -149,7 +150,7 @@ def export_csv
 
     if search_params[:word_tag_name].present?
       words = words.joins(word_taggings: :word_tag)
-                   .where("word_tags.name LIKE ?", "%#{search_params[:word_tag_name]}%")
+                   .where(word_tags:{ name: search_params[:word_tag_name]})
     end
 
     if search_params[:synonym].present?

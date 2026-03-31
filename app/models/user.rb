@@ -16,6 +16,16 @@ class User < ApplicationRecord
 
     before_save :downcase_email
 
+    scope :with_quiz_stats, -> {
+
+      joins(:quiz_sessions)
+          .where(quiz_sessions: {status: "completed" })
+          .group("users.id")
+          .select(
+            "users.id", "users.name","MAX(quiz_sessions.score)as best_score",
+            "RANK() OVER(ORDER BY MAX(quiz_sessions.score) DESC) as rank"
+          )
+    }
 
 
 

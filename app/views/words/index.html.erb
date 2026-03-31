@@ -26,16 +26,13 @@
         </div>
         <div class="form-group">
           <%= f.label "search[word_tag_name]", "タグ"%>
-          <%= f.text_field "search[word_tag_name]",
-                    value: params.dig(:search, :word_tag_name),
-                    class: "form-control",
-                    placeholder: "動物" %>
+          <%= f.collection_select "search[word_tag_name]", @word_tags||[], :name, :name, { include_blank: "すべてのタグ", selected: params.dig(:search, :word_tag_name)}, {class: "form-control"} %>
         </div>
+
         <div class="form-group">
           <%= f.label "search[synonym]", "類義語"%>
-          <%= f.text_field "search[synonym]",
-                    value: params.dig(:search, :synonym),
-                    class: "form-control" %>
+
+          <%= f.text_field "search[synonym]", value:params.dig(:search, :synonym), class: "form-control" %>
         </div>
           
 
