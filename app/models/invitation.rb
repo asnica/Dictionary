@@ -24,10 +24,11 @@ class Invitation < ApplicationRecord
     return if accepted?
 
     transaction do
-      update!(accepted_at: Time.current)
+      update_columns(accepted_at: Time.current)
 
       inviter.with_lock do
-        inviter.increment!(:image_credits, REWARD_CREDITS)
+        new_credits = inviter.image_credits + REWARD_CREDITS
+        inviter.update_columns(image_credits: new_credits)
       end
     end
   end

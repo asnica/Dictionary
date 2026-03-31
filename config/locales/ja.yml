@@ -5,6 +5,7 @@ ja:
       next: 次へ
       first: 最初
       last: 最後
+      truncate: "-"
   activerecord:
     models:
       user: ユーザー
@@ -31,3 +32,5 @@ ja:
         too_long: "は%{count}文字以内で入力してください"
         taken: "はすでに存在します"
         invalid: "が正しくありません"
+        confirmation: "と%{attribute}の入力が一致しません"
+

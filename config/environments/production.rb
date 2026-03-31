@@ -30,7 +30,7 @@ Rails.application.configure do
   config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = false
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -49,11 +49,11 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Replace the default in-process memory cache store with a durable alternative.
-  config.cache_store = :solid_cache_store
+  config.cache_store = :memory_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.active_job.queue_adapter = :inline
+  #config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -63,13 +63,13 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { host: "dictionary.asnica.work" }
+  config.action_mailer.default_url_options = { host: "18.183.245.160", protocol: 'http' }
   config.action_mailer.smtp_settings = {
     address: "smtp.mailgun.org",
     port: 587,
-    domain: "sandbox38146922860d4236b6ba2262d36d7ee2.mailgun.org",
-    user_name: ENV["MAILGUN_USER"],
-    password: ENV["MAILGUN_PASSWORD"],
+    domain: ENV['MAILGUN_DOMAIN'],
+    user_name:ENV['MAILGUN_USER'], 
+    password:ENV['MAILGUN_PASSWORD'],
     authentication: "plain",
     enable_starttls_auto: true }
 

@@ -64,6 +64,12 @@ class WordTagsController < ApplicationController
 
   def authorize_user!
     tag = current_user.word_tags.find_by(id: params[:id])
+
+    if tag.nil?
+       redirect_to word_tags_path, alert: "タグが見つかりません。"
+     return
+   end
+
     if tag.system_tag?
       redirect_to word_tags_path, alert: "システムタグは編集できません。"
     elsif tag.id != params[:id].to_i

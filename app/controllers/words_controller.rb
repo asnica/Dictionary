@@ -2,6 +2,7 @@ class WordsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_word, only: [ :show, :edit, :update, :destroy ]
   before_action :authorize_word_edit, only: [ :edit, :update, :destroy ]
+  skip_before_action :verify_authenticity_token, only: [:generate_image]
 
   def index
     @words = filter_words.distinct.order(:japanese).page(params[:page]).per(10)
@@ -61,26 +62,51 @@ class WordsController < ApplicationController
       redirect_to words_path
     end
 
+def export_csv
+     @words = filter_words.distinct.order(:japanese)
+
+
+     require "csv"
+     utf8_csv = CSV.generate(headers: true, row_sep: "\r\n") do |csv|
+       csv << [ "日本語", "読み", "意味" ]
+       @words.each do |word|
+         csv << [ word.japanese, word.reading, word.english ]
+       end
+     end
+
+
+     csv_data = utf8_csv.encode(
+       Encoding::CP932,
+       invalid: :replace,
+       undef: :replace,
+       replace: "?"
+     )
+
+
+     send_data csv_data,
+       filename: "words_#{Time.current.strftime('%Y%m%d_%H%M%S')}.csv",
+       type: "text/csv; charset=shift_jis",
+       disposition: "attachment"
+   end
 
 
 
+   # def export_csv
+   #   @words = filter_words.distinct.order(:japanese)
 
-    def export_csv
-      @words = filter_words.distinct.order(:japanese)
+   #   require "csv"
+   #   csv_data = CSV.generate(headers: true) do |csv|
+   #     csv << [ "日本語", "読み", "意味" ]
+   #     @words.each do |word|
+   #       csv << [ word.japanese, word.reading, word.english ]
+   #     end
+   #   end
 
-      require "csv"
-      csv_data = CSV.generate(headers: true) do |csv|
-        csv << [ "日本語", "読み", "意味" ]
-        @words.each do |word|
-          csv << [ word.japanese, word.reading, word.english ]
-        end
-      end
-
-      send_data csv_data,
-        filename: "words_#{Time.current.strftime('%Y%m%d_%H%M%S')}.csv",
-        type: "text/csv; charset=shift_jis",
-        disposition: "attachment"
-    end
+   #   send_data csv_data,
+   #     filename: "words_#{Time.current.strftime('%Y%m%d_%H%M%S')}.csv",
+   #     type: "text/csv; charset=shift_jis",
+   #     disposition: "attachment"
+   # end
 
      def generate_image
       result = ImageGenerationService.new(

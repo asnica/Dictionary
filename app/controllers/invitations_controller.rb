@@ -11,7 +11,7 @@ class InvitationsController < ApplicationController
 
 
     if @invitation.save
-      InvitationMailer.invite(@invitation).deliver_now
+      InvitationMailer.invite(@invitation).deliver_later
       redirect_to invitations_path, notice: "#{@invitation.email}に招待リンクを送信しました"
     else
       @invitations = current_user.invitations.order(created_at: :desc)
